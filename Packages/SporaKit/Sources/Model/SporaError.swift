@@ -25,6 +25,14 @@ public enum SporaError: Error, Equatable, Sendable, Codable {
         }
     }
 
+    /// Reverse-lookup from a `messageKey` (used to decode an error carried
+    /// across the app ↔ tunnel-appex boundary).
+    public init(messageKey: String?) {
+        self = [SporaError.invalidUrl, .connectFailed, .shareFailed,
+                .vpnPermissionDenied, .vpnUnavailable, .generic]
+            .first { $0.messageKey == messageKey } ?? .generic
+    }
+
     /// Parse the harness `err=` token (Android `UserError.valueOf`).
     public init(token: String?) {
         switch token?.uppercased() {

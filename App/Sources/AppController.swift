@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import NetworkExtension
 import SporaKit
 
 /// Owns the app-level actions and UI-flow state that sit above the pure
@@ -22,6 +23,11 @@ final class AppController: ObservableObject {
     /// never reaches disk (real data reloads on `reset`).
     var persistenceSuppressed = false
 
+    private let tunnel = TunnelManager()
+    /// The use connection whose tunnel is being (dis)connected — for status
+    /// attribution back into the model.
+    private var connectingUseId: String?
+
     enum Flow: Equatable {
         case saveConnection(prefillURL: String?)   // sheet 1g
         case createShare(handoff: ShareDraft?)     // busy 3a → handoff 2c
@@ -37,6 +43,15 @@ final class AppController: ObservableObject {
         self.model = model
         self.store = store
         loadPersisted()
+        tunnel.onStatus = { [weak self] status in self?.handleTunnelStatus(status) }
+        // Reconcile an already-running tunnel (app relaunched while connected).
+        Task { [weak self] in
+            guard let self,
+                  let (status, url) = await self.tunnel.syncExisting(),
+                  let use = self.model.uses.first(where: { $0.url == url }) else { return }
+            self.connectingUseId = use.id
+            self.handleTunnelStatus(status)
+        }
     }
 
     // MARK: - Persistence
@@ -97,14 +112,48 @@ final class AppController: ObservableObject {
     }
 
     func toggleUse(_ id: String) {
-        // Connect mode needs the tunnel appex (signing-blocked, ADR D5) — still
-        // simulated. Real path: connect_utun() from a NEPacketTunnelProvider.
         switch model.useState(id) {
         case .active, .pending:
-            model.connectDisconnected()
+            tunnel.disconnect() // NEVPNStatus observer drives .disconnected
         default:
-            model.connectConnecting(id)
-            after(0.5) { [model] in model.connectConnected() }
+            guard let use = model.uses.first(where: { $0.id == id }) else { return }
+            connectingUseId = id
+            model.connectConnecting(id) // optimistic; the status observer confirms
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    try await self.tunnel.connect(url: use.url)
+                } catch {
+                    // Most commonly the user declined the VPN-approval dialog.
+                    self.model.connectFailed(.vpnPermissionDenied, id: id)
+                    self.connectingUseId = nil
+                }
+            }
+        }
+    }
+
+    /// Reconcile the authoritative NEVPNStatus into the model (ADR D3).
+    private func handleTunnelStatus(_ status: NEVPNStatus) {
+        switch status {
+        case .connecting, .reasserting:
+            if let id = connectingUseId { model.connectConnecting(id) }
+        case .connected:
+            model.connectConnected()
+        case .disconnecting:
+            break
+        case .disconnected, .invalid:
+            Task { [weak self] in
+                guard let self else { return }
+                let key = await self.tunnel.lastErrorKey()
+                if let key {
+                    self.model.connectFailed(SporaError(messageKey: key), id: self.connectingUseId)
+                } else if self.model.useConnected || self.model.useConnecting || self.model.useActiveId != nil {
+                    self.model.connectDisconnected()
+                }
+                self.connectingUseId = nil
+            }
+        @unknown default:
+            break
         }
     }
 
@@ -217,15 +266,8 @@ final class AppController: ObservableObject {
 
     // MARK: - Helpers
 
-    private func after(_ seconds: Double, _ work: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: work)
-    }
-
-    static func syntheticHandle(_ id: String) -> Int32 {
-        Int32(truncatingIfNeeded: Fmt.seed(id))
-    }
-
-    /// Deterministic spora.to token from an id (placeholder for a real share URL).
+    /// Deterministic spora.to token from an id — used only by the debug harness
+    /// to synthesize plausible URLs for seeded shares.
     static func syntheticURL(_ id: String) -> String {
         let alphabet = Array("0123456789abcdefghijkmnpqrstuvwxyz")
         var s = Fmt.seed(id)
