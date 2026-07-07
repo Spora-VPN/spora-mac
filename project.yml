@@ -1,0 +1,93 @@
+name: Spora
+options:
+  bundleIdPrefix: to.spora.mac
+  deploymentTarget:
+    macOS: "13.0"
+  createIntermediateGroups: true
+  defaultConfig: Debug
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""
+    # Ad-hoc signing phase: the app + frameworks run locally unsigned while the
+    # NE appex (which needs a real cert + entitlements) is still gated. Swap to
+    # Automatic + a paid team when the dev cert is re-minted.
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGNING_ALLOWED: "NO"
+
+targets:
+  SporaDesign:
+    type: framework
+    platform: macOS
+    sources:
+      - path: Packages/SporaDesign/Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaDesign
+        DEFINES_MODULE: "YES"
+        GENERATE_INFOPLIST_FILE: "YES"
+        SKIP_INSTALL: "NO"
+
+  SporaKit:
+    type: framework
+    platform: macOS
+    sources:
+      - path: Packages/SporaKit/Sources
+      # Generated UniFFI Swift bindings (from ../spora/build-ffi-apple.sh).
+      - path: rust-out/Sources/SporaFFI/spora_ffi.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaKit
+        DEFINES_MODULE: "YES"
+        GENERATE_INFOPLIST_FILE: "YES"
+        SKIP_INSTALL: "NO"
+        # The UniFFI-generated C module (spora_ffiFFI) lives here as a modulemap
+        # + header; the Rust staticlib provides its symbols.
+        SWIFT_INCLUDE_PATHS: $(SRCROOT)/rust-out/include
+        LIBRARY_SEARCH_PATHS: $(SRCROOT)/rust-out/lib
+        OTHER_LDFLAGS: -lspora_ffi -lresolv
+    dependencies:
+      - sdk: Security.framework
+      - sdk: SystemConfiguration.framework
+
+  Spora:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+        excludes:
+          - "Info.plist"
+          - "Resources/Fonts"
+      # Folder reference so the IBM Plex TTFs land in Resources/Fonts/ (intact
+      # subdir), matching ATSApplicationFontsPath. SporaDesign also registers
+      # them programmatically at launch as a backstop.
+      - path: App/Resources/Fonts
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac
+        INFOPLIST_FILE: App/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        ENABLE_HARDENED_RUNTIME: "NO"
+        COMBINE_HIDPI_IMAGES: "YES"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Fonts bundled in Resources are registered via ATSApplicationFontsPath.
+    dependencies:
+      - target: SporaKit
+        embed: true
+      - target: SporaDesign
+        embed: true
+
+schemes:
+  Spora:
+    build:
+      targets:
+        Spora: all
+    run:
+      config: Debug
