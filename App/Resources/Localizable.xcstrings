@@ -1,0 +1,1639 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "section_my_shares": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MY SHARES"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "МОИ РАЗДАЧИ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "МАЕ РАЗДАЧЫ"
+          }
+        }
+      }
+    },
+    "section_connections": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONNECTIONS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОДКЛЮЧЕНИЯ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАДКЛЮЧЭННІ"
+          }
+        }
+      }
+    },
+    "empty_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing yet."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пока пусто."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пакуль пуста."
+          }
+        }
+      }
+    },
+    "status_offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OFFLINE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОФЛАЙН"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АФЛАЙН"
+          }
+        }
+      }
+    },
+    "st_connected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONNECTED"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОДКЛЮЧЕНО"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАДКЛЮЧАНА"
+          }
+        }
+      }
+    },
+    "st_connecting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONNECTING…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОДКЛЮЧАЕМ…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАДКЛЮЧАЕМ…"
+          }
+        }
+      }
+    },
+    "st_connecting_via": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONNECTING VIA %@…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОДКЛЮЧАЕМ ЧЕРЕЗ %@…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАДКЛЮЧАЕМ ПРАЗ %@…"
+          }
+        }
+      }
+    },
+    "st_sharing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHARING"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДЕЛЮСЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДЗЯЛЮСЯ"
+          }
+        }
+      }
+    },
+    "st_starting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STARTING…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАПУСКАЕМ…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАПУСКАЕМ…"
+          }
+        }
+      }
+    },
+    "st_inactive": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "INACTIVE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НЕАКТИВНО"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НЕАКТЫЎНА"
+          }
+        }
+      }
+    },
+    "st_sharing_names": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHARING — %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДЕЛЮСЬ — %@"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДЗЯЛЮСЯ — %@"
+          }
+        }
+      }
+    },
+    "st_sharing_count": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHARING — %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДЕЛЮСЬ — %lld"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДЗЯЛЮСЯ — %lld"
+          }
+        }
+      }
+    },
+    "action_share_internet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share your internet"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поделиться интернетом"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падзяліцца інтэрнэтам"
+          }
+        }
+      }
+    },
+    "action_connect_friend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect via a friend"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключиться через друга"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падключыцца праз сябра"
+          }
+        }
+      }
+    },
+    "empty_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your connections will live here"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Здесь будут ваши подключения"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тут будуць вашы падключэнні"
+          }
+        }
+      }
+    },
+    "empty_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share your internet or connect via a friend — links travel by messenger."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поделитесь интернетом или подключитесь через друга — ссылки передаются в мессенджере."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падзяліцеся інтэрнэтам або падключыцеся праз сябра — спасылкі перадаюцца ў месэнджары."
+          }
+        }
+      }
+    },
+    "card_share_eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CREATE A LINK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СОЗДАТЬ ССЫЛКУ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СТВАРЫЦЬ СПАСЫЛКУ"
+          }
+        }
+      }
+    },
+    "card_share_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share your internet"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поделиться интернетом"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падзяліцца інтэрнэтам"
+          }
+        }
+      }
+    },
+    "card_share_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send the link to someone you trust."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправьте ссылку тому, кому доверяете."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дашліце спасылку таму, каму давяраеце."
+          }
+        }
+      }
+    },
+    "card_use_eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HAVE A LINK?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЕСТЬ ССЫЛКА?"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЁСЦЬ СПАСЫЛКА?"
+          }
+        }
+      }
+    },
+    "card_use_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect via a friend"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключиться через друга"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падключыцца праз сябра"
+          }
+        }
+      }
+    },
+    "card_use_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste the link a friend sent you."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вставьте ссылку, которую прислал друг."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Устаўце спасылку, якую даслаў сябар."
+          }
+        }
+      }
+    },
+    "label_link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LINK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ССЫЛКА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СПАСЫЛКА"
+          }
+        }
+      }
+    },
+    "label_created": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CREATED"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СОЗДАНО"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СТВОРАНА"
+          }
+        }
+      }
+    },
+    "label_last_activity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LAST ACTIVITY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОСЛЕДНЯЯ АКТИВНОСТЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АПОШНЯЯ АКТЫЎНАСЦЬ"
+          }
+        }
+      }
+    },
+    "share_toggle_on_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing is on"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздача идёт"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздача ідзе"
+          }
+        }
+      }
+    },
+    "share_toggle_on_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your internet is available through this link."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш интернет доступен по этой ссылке."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш інтэрнэт даступны па гэтай спасылцы."
+          }
+        }
+      }
+    },
+    "share_toggle_off_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздача"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздача"
+          }
+        }
+      }
+    },
+    "share_toggle_off_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on to share your internet."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включите, чтобы поделиться интернетом."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Уключыце, каб падзяліцца інтэрнэтам."
+          }
+        }
+      }
+    },
+    "use_connected_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключено"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падключана"
+          }
+        }
+      }
+    },
+    "use_connected_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All traffic from this Mac goes through %@."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Весь трафик этого Mac идёт через %@."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увесь трафік гэтага Mac ідзе праз %@."
+          }
+        }
+      }
+    },
+    "use_off_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключение"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падключэнне"
+          }
+        }
+      }
+    },
+    "use_off_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on to route traffic through a friend."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включите, чтобы направить трафик через друга."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Уключыце, каб накіраваць трафік праз сябра."
+          }
+        }
+      }
+    },
+    "share_share_again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHARE AGAIN"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОДЕЛИТЬСЯ СНОВА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАДЗЯЛІЦЦА ЗНОЎ"
+          }
+        }
+      }
+    },
+    "share_delete_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To delete, stop sharing first."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чтобы удалить, остановите раздачу."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каб выдаліць, спыніце раздачу."
+          }
+        }
+      }
+    },
+    "share_delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DELETE SHARE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "УДАЛИТЬ РАЗДАЧУ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВЫДАЛІЦЬ РАЗДАЧУ"
+          }
+        }
+      }
+    },
+    "use_delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DELETE CONNECTION"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "УДАЛИТЬ ПОДКЛЮЧЕНИЕ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВЫДАЛІЦЬ ПАДКЛЮЧЭННЕ"
+          }
+        }
+      }
+    },
+    "use_delete_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To delete, disconnect first."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чтобы удалить, сначала отключитесь."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каб выдаліць, спачатку адключыцеся."
+          }
+        }
+      }
+    },
+    "retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RETRY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОВТОРИТЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАЎТАРЫЦЬ"
+          }
+        }
+      }
+    },
+    "banner_dismiss": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLOSE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАКРЫТЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАКРЫЦЬ"
+          }
+        }
+      }
+    },
+    "busy_eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW SHARE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ РАЗДАЧА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ РАЗДАЧА"
+          }
+        }
+      }
+    },
+    "busy_status": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CREATING LINK…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СОЗДАЁМ ССЫЛКУ…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СТВАРАЕМ СПАСЫЛКУ…"
+          }
+        }
+      }
+    },
+    "busy_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One moment…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Одну секунду…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адну секунду…"
+          }
+        }
+      }
+    },
+    "busy_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The link will appear here — then just copy and send it."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ссылка появится здесь — останется скопировать и отправить."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спасылка з'явіцца тут — застанецца скапіраваць і адправіць."
+          }
+        }
+      }
+    },
+    "cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CANCEL"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОТМЕНА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СКАСАВАЦЬ"
+          }
+        }
+      }
+    },
+    "new_share_eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW SHARE — LINK READY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ РАЗДАЧА — ССЫЛКА ГОТОВА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ РАЗДАЧА — СПАСЫЛКА ГАТОВАЯ"
+          }
+        }
+      }
+    },
+    "copy_link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COPY LINK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СКОПИРОВАТЬ ССЫЛКУ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СКАПІРАВАЦЬ СПАСЫЛКУ"
+          }
+        }
+      }
+    },
+    "copy_link_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send it in a messenger to someone you trust."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправьте её в мессенджере тому, кому доверяете."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адпраўце яе ў месэнджары таму, каму давяраеце."
+          }
+        }
+      }
+    },
+    "name_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NAME"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАЗВАНИЕ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАЗВА"
+          }
+        }
+      }
+    },
+    "name_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mom's Phone"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мамин телефон"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мамін тэлефон"
+          }
+        }
+      }
+    },
+    "name_helper": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name helps you see who is using your internet."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название поможет узнать, кто пользуется вашим интернетом."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Назва дапаможа пазнаць, хто карыстаецца вашым інтэрнэтам."
+          }
+        }
+      }
+    },
+    "done": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DONE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ГОТОВО"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ГАТОВА"
+          }
+        }
+      }
+    },
+    "share_default_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключение %lld"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падключэнне %lld"
+          }
+        }
+      }
+    },
+    "use_default_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown connection"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неизвестное подключение"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Невядомае падключэнне"
+          }
+        }
+      }
+    },
+    "sheet_new_connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW CONNECTION"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВОЕ ПОДКЛЮЧЕНИЕ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЕ ПАДКЛЮЧЭННЕ"
+          }
+        }
+      }
+    },
+    "sheet_url_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONNECTION LINK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ССЫЛКА НА ПОДКЛЮЧЕНИЕ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ССЫЛКА НА ПАДКЛЮЧЭННЕ"
+          }
+        }
+      }
+    },
+    "sheet_url_error": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This doesn't look like a Spora link."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Это не похоже на ссылку Spora."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гэта не падобна на спасылку Spora."
+          }
+        }
+      }
+    },
+    "sheet_name_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NAME — OPTIONAL"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАЗВАНИЕ — НЕОБЯЗАТЕЛЬНО"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАЗВА — НЕАБАВЯЗКОВА"
+          }
+        }
+      }
+    },
+    "sheet_name_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dana's Home"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дом Дани"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дом Даны"
+          }
+        }
+      }
+    },
+    "sheet_name_helper": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name helps you recognize whose it is."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название поможет узнать, чьё это подключение."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Назва дапаможа пазнаць, чыё гэта падключэнне."
+          }
+        }
+      }
+    },
+    "sheet_save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SAVE CONNECTION"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СОХРАНИТЬ ПОДКЛЮЧЕНИЕ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАХАВАЦЬ ПАДКЛЮЧЭННЕ"
+          }
+        }
+      }
+    },
+    "use_modal_url_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "spora.to/s/…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "spora.to/s/…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "spora.to/s/…"
+          }
+        }
+      }
+    },
+    "popover_create_share": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create a share link…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создать ссылку для раздачи…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Стварыць спасылку для раздачы…"
+          }
+        }
+      }
+    },
+    "popover_connect_link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect via a link…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключиться по ссылке…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Падключыцца праз спасылку…"
+          }
+        }
+      }
+    },
+    "popover_open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Spora"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть Spora"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адкрыць Spora"
+          }
+        }
+      }
+    },
+    "error_invalid_url": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This doesn't look like a Spora link."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Это не похоже на ссылку Spora."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гэта не падобна на спасылку Spora."
+          }
+        }
+      }
+    },
+    "error_connect_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't connect. Check your internet connection and try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось подключиться. Проверьте интернет и попробуйте снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не атрымалася падключыцца. Праверце інтэрнэт і паспрабуйце зноў."
+          }
+        }
+      }
+    },
+    "error_share_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't start sharing. Check your internet connection and try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось начать раздачу. Проверьте интернет и попробуйте снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не атрымалася пачаць раздачу. Праверце інтэрнэт і паспрабуйце зноў."
+          }
+        }
+      }
+    },
+    "error_vpn_permission": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora needs VPN permission to connect. Try again and allow the VPN request."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora нужен доступ к VPN. Попробуйте снова и разрешите запрос."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora патрэбен дазвол на VPN. Паспрабуйце зноў і дазвольце запыт."
+          }
+        }
+      }
+    },
+    "error_vpn_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't set up the VPN tunnel. Restart the app and try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось настроить VPN-туннель. Перезапустите Spora и попробуйте снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не атрымалася наладзіць VPN-тунэль. Перазапусціце Spora і паспрабуйце зноў."
+          }
+        }
+      }
+    },
+    "error_generic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong. Please try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Что-то пошло не так. Попробуйте снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нешта пайшло не так. Паспрабуйце зноў."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
