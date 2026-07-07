@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Xcode / Swift
+build/
+DerivedData/
+*.xcuserdatad/
+xcuserdata/
+*.xcresult
+.swiftpm/
+
+# Rust artifacts built into this repo
+rust/target/
+*.a
+*.xcframework
+
+# Session-local Claude settings
+.claude/settings.local.json
+
+# Harness output
+artifacts/
