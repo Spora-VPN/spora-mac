@@ -26,7 +26,7 @@ cmd_build() {
   command -v xcodegen >/dev/null && xcodegen generate >/dev/null
   xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
     -derivedDataPath "$DERIVED" -arch "$ARCH" build \
-    CODE_SIGNING_ALLOWED=NO | tail -1
+    -allowProvisioningUpdates | tail -1
   # Register so `open spora-debug://…` routes to the app.
   [ -x "$LSREGISTER" ] && "$LSREGISTER" -f "$APP" >/dev/null 2>&1 || true
 }

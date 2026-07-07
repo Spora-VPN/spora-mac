@@ -11,14 +11,10 @@ settings:
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
-    DEVELOPMENT_TEAM: ""
-    # Ad-hoc signing phase: the app + frameworks run locally unsigned while the
-    # NE appex (which needs a real cert + entitlements) is still gated. Swap to
-    # Automatic + a paid team when the dev cert is re-minted.
-    CODE_SIGN_STYLE: Manual
-    CODE_SIGN_IDENTITY: "-"
-    CODE_SIGNING_REQUIRED: "NO"
-    CODE_SIGNING_ALLOWED: "NO"
+    # Dev-signed on a paid team so the NetworkExtension packet-tunnel
+    # appex can run. Automatic signing + `-allowProvisioningUpdates` mints the
+    # to.spora.mac / to.spora.mac.tunnel App IDs and profiles.
+    CODE_SIGN_STYLE: Automatic
 
 targets:
   SporaDesign:
@@ -77,12 +73,43 @@ targets:
         ENABLE_HARDENED_RUNTIME: "NO"
         COMBINE_HIDPI_IMAGES: "YES"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: App/Spora.entitlements
         # Fonts bundled in Resources are registered via ATSApplicationFontsPath.
     dependencies:
       - target: SporaKit
         embed: true
       - target: SporaDesign
         embed: true
+      - target: SporaTunnelExt
+        embed: true   # into Contents/PlugIns
+
+  # NetworkExtension packet-tunnel app extension (connect/use side). Stays a thin
+  # sandboxed shim (ADR): it locates the utun fd and hands a dup to Rust's
+  # connect_utun(); all tunnel logic lives in the Rust core.
+  SporaTunnelExt:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Tunnel
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.tunnel
+        INFOPLIST_FILE: Tunnel/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        ENABLE_HARDENED_RUNTIME: "NO"
+        CODE_SIGN_ENTITLEMENTS: Tunnel/SporaTunnelExt.entitlements
+        # Load SporaKit from the host app's Frameworks dir at runtime (the appex
+        # lives at Spora.app/Contents/PlugIns/SporaTunnelExt.appex).
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/../../../../Frameworks"
+    dependencies:
+      - target: SporaKit
+        embed: false   # shared with the host app via rpath
+        link: true
+      - sdk: NetworkExtension.framework
 
 schemes:
   Spora:
