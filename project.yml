@@ -110,6 +110,7 @@ targets:
         embed: false   # shared with the host app via rpath
         link: true
       - sdk: NetworkExtension.framework
+      - sdk: SystemConfiguration.framework
 
 schemes:
   Spora:
