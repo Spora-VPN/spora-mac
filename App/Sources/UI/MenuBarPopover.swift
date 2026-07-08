@@ -1,36 +1,64 @@
 import SwiftUI
+import AppKit
 import SporaKit
 import SporaDesign
 
 /// The menu-bar template icon (design 1h/2e). Mono shapes carry state without
 /// color: ● active · ○ pending · ◆ error · nothing = offline. Precedence is
-/// resolved by `AppModel.menuBarState`. Drawn in `.primary` so it templates to
-/// the menu bar's light/dark content color.
+/// resolved by `AppModel.menuBarState`.
+///
+/// Rendered as a fixed-size template `NSImage`: `MenuBarExtra` sizes a `View`
+/// label to the image's *intrinsic* dimensions (ignoring `.frame()`), which
+/// blows the tall mark up several ×. `Image(nsImage:)` with an explicitly-sized
+/// template image renders at exactly that size and tints for light/dark.
 struct MenuBarLabel: View {
     let state: MenuBarState
-
     var body: some View {
-        HStack(spacing: 3) {
-            Image("LogoMonoInk")
-                .renderingMode(.template)
-                .resizable().scaledToFit()
-                .frame(height: 15)
-            stateGlyph
-        }
-        .foregroundStyle(.primary)
+        Image(nsImage: MenuBarLabel.icon(for: state))
     }
 
-    @ViewBuilder private var stateGlyph: some View {
-        switch state {
-        case .offline:
-            EmptyView()
-        case .active:
-            Circle().frame(width: 6, height: 6)
-        case .pending:
-            Circle().strokeBorder(lineWidth: 1.6).frame(width: 7, height: 7)
-        case .error:
-            RoundedRectangle(cornerRadius: 1).frame(width: 6, height: 6).rotationEffect(.degrees(45))
+    /// Height of the menu-bar icon in points (fits the ~22pt system menu bar).
+    private static let iconHeight: CGFloat = 16
+
+    static func icon(for state: MenuBarState) -> NSImage {
+        let h = iconHeight
+        let markH = h - 3
+        let mark = NSImage(named: "LogoMonoInk")
+        let aspect = mark.map { $0.size.width / max($0.size.height, 1) } ?? 0.72
+        let markW = (markH * aspect).rounded()
+        let gap: CGFloat = 3
+        let glyphSize: CGFloat = state == .offline ? 0 : 7
+        let width = markW + (glyphSize > 0 ? gap + glyphSize : 0)
+
+        let image = NSImage(size: NSSize(width: width, height: h))
+        image.lockFocus()
+        mark?.draw(in: NSRect(x: 0, y: (h - markH) / 2, width: markW, height: markH))
+
+        if glyphSize > 0 {
+            NSColor.black.setFill(); NSColor.black.setStroke()
+            let gx = markW + gap
+            let cy = h / 2
+            switch state {
+            case .active:
+                NSBezierPath(ovalIn: NSRect(x: gx, y: cy - 3, width: 6, height: 6)).fill()
+            case .pending:
+                let ring = NSBezierPath(ovalIn: NSRect(x: gx + 0.75, y: cy - 3.25, width: 6.5, height: 6.5))
+                ring.lineWidth = 1.5; ring.stroke()
+            case .error:
+                let r: CGFloat = 3.5, cx = gx + 3.5
+                let d = NSBezierPath()
+                d.move(to: NSPoint(x: cx, y: cy + r))
+                d.line(to: NSPoint(x: cx + r, y: cy))
+                d.line(to: NSPoint(x: cx, y: cy - r))
+                d.line(to: NSPoint(x: cx - r, y: cy))
+                d.close(); d.fill()
+            case .offline:
+                break
+            }
         }
+        image.unlockFocus()
+        image.isTemplate = true
+        return image
     }
 }
 
