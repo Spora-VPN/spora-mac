@@ -46,6 +46,7 @@ enum DebugController {
         case "create-share": controller.beginCreateShare() // exercise the real share() flow
         case "connect-url": if let u = q["url"] { controller.connectToURL(u) } // real tunnel
         case "icon-preview": iconPreview()
+        case "gen-appicon": genAppIcon()
         case "connect-self": // connect to this app's own freshly-created share (loopback)
             if let url = model.shares.compactMap({ model.shareURL($0.id) }).first {
                 controller.connectToURL(url)
@@ -90,6 +91,40 @@ enum DebugController {
         model.setConnections(shares: shareConns, uses: useConns)
         for c in shareConns { model.registerShareURL(c.id, AppController.syntheticURL(c.id)) }
         model.selectedId = shareConns.first?.id ?? useConns.first?.id
+    }
+
+    /// Generate the macOS app-icon PNGs (the 2-color spore mark on a sage
+    /// rounded-rect) at exact pixel sizes, into artifacts/appicon/.
+    private static func genAppIcon() {
+        let sizes = [16, 32, 64, 128, 256, 512, 1024]
+        let bg = NSColor(srgbRed: 0xD6 / 255.0, green: 0xDA / 255.0, blue: 0xD3 / 255.0, alpha: 1)
+        let mark = NSImage(named: "LogoIcon")
+        let dir = artifactsDir.appendingPathComponent("appicon")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        for px in sizes {
+            guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: px, pixelsHigh: px,
+                                             bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                                             colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else { continue }
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+            let s = CGFloat(px)
+            let inset = s * 0.06
+            let side = s - 2 * inset
+            let card = NSRect(x: inset, y: inset, width: side, height: side)
+            NSBezierPath(roundedRect: card, xRadius: side * 0.2237, yRadius: side * 0.2237).addClip()
+            bg.setFill(); card.fill()
+            if let mark {
+                let mh = side * 0.56
+                let mw = mh * (mark.size.width / max(mark.size.height, 1))
+                mark.draw(in: NSRect(x: (s - mw) / 2, y: (s - mh) / 2, width: mw, height: mh),
+                          from: .zero, operation: .sourceOver, fraction: 1)
+            }
+            NSGraphicsContext.restoreGraphicsState()
+            if let png = rep.representation(using: .png, properties: [:]) {
+                try? png.write(to: dir.appendingPathComponent("icon_\(px).png"))
+            }
+        }
+        NSLog("[spora-debug] app icon PNGs written to \(dir.path)")
     }
 
     /// Render the four menu-bar icon states (scaled up, on white) so the tray
