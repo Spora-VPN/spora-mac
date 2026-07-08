@@ -31,9 +31,10 @@ func tlogReset() { try? FileManager.default.removeItem(atPath: tunnelLogPath) }
 /// to Rust's `connect_utun()`, which owns it and pumps packets (4-byte AF
 /// framing) in the core's tokio runtime. All tunnel logic lives in Rust.
 ///
-/// On Darwin, provider-originated sockets (the relay dial inside `connect_utun`)
-/// bypass the tunnel automatically, so no socket protector is needed and the
-/// default route can be installed up front (ADR D2).
+/// macOS does NOT auto-bypass provider-originated sockets, so `connect_utun` is
+/// given a protector that binds each relay/direct socket to the physical
+/// interface (`IP_BOUND_IF`) — otherwise the relay dial loops back into the
+/// tunnel it is establishing (ADR D2, corrected during bring-up).
 final class PacketTunnelProvider: NEPacketTunnelProvider {
     private var handle: Int32?
     private var mtuCallback: TunnelMtuCallback?
@@ -41,7 +42,8 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
     private var protector: TunnelProtector?
 
     private let tunnelAddress = "10.11.0.2"
-    private let tunnelMTU = 1280
+    private var currentMTU = 1280            // starts conservative; raised by PMTUD
+    private var relayHosts: [String] = []    // excluded-route hosts, kept for re-apply
 
     override func startTunnel(options: [String: NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         SporaKit.initLogging()
@@ -56,8 +58,9 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         // primary interface — so the protector can bind relay sockets to it.
         let physIfIndex = Self.primaryInterfaceIndex()
         tlog("physical interface index: \(physIfIndex.map(String.init(describing:)) ?? "nil")")
+        relayHosts = Self.relayHosts(from: url)
 
-        setTunnelNetworkSettings(makeSettings(excluding: Self.relayHosts(from: url))) { [weak self] error in
+        setTunnelNetworkSettings(makeSettings()) { [weak self] error in
             guard let self else { return }
             if let error {
                 tlog("setTunnelNetworkSettings failed: \(error)")
@@ -70,7 +73,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             let dupFd = dup(fd)
             guard dupFd >= 0 else { completionHandler(TunnelError.dupFailed); return }
 
-            let mtuCb = TunnelMtuCallback()
+            let mtuCb = TunnelMtuCallback(provider: self)
             let eventCb = TunnelEventCallback(provider: self)
             let protector = physIfIndex.map { TunnelProtector(ifIndex: $0) }
             self.mtuCallback = mtuCb
@@ -125,23 +128,34 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         return nil
     }
 
-    private func makeSettings(excluding relayHosts: [String]) -> NEPacketTunnelNetworkSettings {
+    private func makeSettings() -> NEPacketTunnelNetworkSettings {
         let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "10.11.0.1")
         let ipv4 = NEIPv4Settings(addresses: [tunnelAddress], subnetMasks: ["255.255.255.0"])
         ipv4.includedRoutes = [NEIPv4Route.default()]
-        // Exclude the relay's own address(es) from the tunnel — otherwise the
-        // provider's QUIC dial to the relay routes back into the tunnel it is
-        // trying to establish and dead-locks (the classic "exclude the VPN
-        // server address" rule). Provider-originated sockets are NOT auto-bypassed
-        // on macOS, contrary to ADR D2's assumption.
+        // Belt-and-suspenders alongside the socket protector: keep the relay's
+        // own address off the tunnel so the transport can't loop back on itself.
         ipv4.excludedRoutes = relayHosts.map {
             NEIPv4Route(destinationAddress: $0, subnetMask: "255.255.255.255")
         }
         settings.ipv4Settings = ipv4
         settings.dnsSettings = NEDNSSettings(servers: ["8.8.8.8"])
-        settings.mtu = NSNumber(value: tunnelMTU)
-        tlog("excluding relay routes: \(relayHosts)")
+        settings.mtu = NSNumber(value: currentMTU)
         return settings
+    }
+
+    /// Re-apply the tunnel settings with a PMTUD-discovered MTU (raised from the
+    /// conservative 1280 for better throughput). The utun fd persists across a
+    /// settings re-apply, so Rust's pump keeps running.
+    func applyMTU(_ mtu: Int32) {
+        let value = Int(mtu)
+        guard value >= 576, value != currentMTU else { return }
+        currentMTU = value
+        tlog("applying discovered MTU \(value)")
+        DispatchQueue.main.async {
+            self.setTunnelNetworkSettings(self.makeSettings()) { error in
+                if let error { tlog("MTU re-apply failed: \(error)") }
+            }
+        }
     }
 
     /// Relay IPv4 addresses to keep off the tunnel: the built-in default plus any
@@ -221,10 +235,15 @@ final class TunnelProtector: SocketProtectorCallback, @unchecked Sendable {
     }
 }
 
-/// MTU is discovered via PMTUD; a conservative 1280 is set up front, so we just
-/// record the value (re-applying tunnel settings mid-session would churn the fd).
+/// PMTUD reports the effective MTU (once after relay connect, again after a
+/// direct upgrade); re-apply it for better throughput.
 final class TunnelMtuCallback: MtuCallback, @unchecked Sendable {
-    func onMtu(mtu: Int32) { tlog("MTU discovered: \(mtu)") }
+    private weak var provider: PacketTunnelProvider?
+    init(provider: PacketTunnelProvider) { self.provider = provider }
+    func onMtu(mtu: Int32) {
+        tlog("MTU discovered: \(mtu)")
+        provider?.applyMTU(mtu)
+    }
 }
 
 /// Surfaces core lifecycle events to NE status: reconnecting → `reasserting`,
