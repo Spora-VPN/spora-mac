@@ -225,6 +225,19 @@ final class AppController: ObservableObject {
         toggleUse(id)
     }
 
+    /// Connect to a URL directly (deep links + debug harness): ensure a use
+    /// connection exists for it, select it, and start the tunnel.
+    func connectToURL(_ rawURL: String, label: String = "Test") {
+        let url = Self.normalizeURL(rawURL)
+        let id = "use-\(Int(Fmt.seed(url)))"
+        if !model.uses.contains(where: { $0.id == id }) {
+            let conn = UseConnection(id: id, label: label, url: url, createdAt: Date())
+            model.setConnections(shares: model.shares, uses: model.uses + [conn])
+        }
+        model.selectedId = id
+        toggleUse(id)
+    }
+
     /// URL validation (Android `isValidShareUrl`): https · spora.to · /s/ prefix.
     static func isValidShareURL(_ raw: String) -> Bool {
         guard let comps = URLComponents(string: normalizeURL(raw)) else { return false }

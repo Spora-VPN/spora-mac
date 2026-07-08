@@ -44,6 +44,12 @@ enum DebugController {
             controller.persistenceSuppressed = true
             seed(model, shares: Int(q["shares"] ?? "0") ?? 0, uses: Int(q["uses"] ?? "0") ?? 0)
         case "create-share": controller.beginCreateShare() // exercise the real share() flow
+        case "connect-url": if let u = q["url"] { controller.connectToURL(u) } // real tunnel
+        case "icon-preview": iconPreview()
+        case "connect-self": // connect to this app's own freshly-created share (loopback)
+            if let url = model.shares.compactMap({ model.shareURL($0.id) }).first {
+                controller.connectToURL(url)
+            }
         case "select": model.selectedId = q["id"]
         case "share-starting": if let id = q["id"] { model.shareStarting(id) }
         case "share-started":
@@ -84,6 +90,29 @@ enum DebugController {
         model.setConnections(shares: shareConns, uses: useConns)
         for c in shareConns { model.registerShareURL(c.id, AppController.syntheticURL(c.id)) }
         model.selectedId = shareConns.first?.id ?? useConns.first?.id
+    }
+
+    /// Render the four menu-bar icon states (scaled up, on white) so the tray
+    /// icon can be inspected without capturing the system menu bar.
+    private static func iconPreview() {
+        let states: [(String, MenuBarState)] = [("offline", .offline), ("active", .active), ("pending", .pending), ("error", .error)]
+        let scale: CGFloat = 6, cellW: CGFloat = 200, cellH: CGFloat = 70
+        let w = cellW * CGFloat(states.count)
+        let img = NSImage(size: NSSize(width: w, height: cellH))
+        img.lockFocus()
+        NSColor.white.setFill(); NSRect(x: 0, y: 0, width: w, height: cellH).fill()
+        for (i, entry) in states.enumerated() {
+            let icon = MenuBarLabel.icon(for: entry.1)
+            icon.isTemplate = false // draw literal black rather than template tint
+            let iw = icon.size.width * scale, ih = icon.size.height * scale
+            icon.draw(in: NSRect(x: CGFloat(i) * cellW + (cellW - iw) / 2, y: (cellH - ih) / 2, width: iw, height: ih))
+        }
+        img.unlockFocus()
+        guard let tiff = img.tiffRepresentation, let rep = NSBitmapImageRep(data: tiff),
+              let png = rep.representation(using: .png, properties: [:]) else { return }
+        try? FileManager.default.createDirectory(at: artifactsDir, withIntermediateDirectories: true)
+        try? png.write(to: artifactsDir.appendingPathComponent("icon-preview.png"))
+        NSLog("[spora-debug] icon-preview written (states: \(states.map(\.0)))")
     }
 
     private static func queryItems(_ url: URL) -> [String: String] {
