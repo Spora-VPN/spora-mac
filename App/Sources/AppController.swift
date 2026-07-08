@@ -24,6 +24,7 @@ final class AppController: ObservableObject {
     var persistenceSuppressed = false
 
     private let tunnel = TunnelManager()
+    private let notifications = NotificationManager()
     /// The use connection whose tunnel is being (dis)connected — for status
     /// attribution back into the model.
     private var connectingUseId: String?
@@ -43,6 +44,7 @@ final class AppController: ObservableObject {
         self.model = model
         self.store = store
         loadPersisted()
+        notifications.configure(controller: self)
         tunnel.onStatus = { [weak self] status in self?.handleTunnelStatus(status) }
         // Reconcile an already-running tunnel (app relaunched while connected).
         Task { [weak self] in
@@ -80,16 +82,32 @@ final class AppController: ObservableObject {
         case .active, .pending:
             if let handle = model.activeShares[id]?.handle { try? stopShare(handle: handle) }
             model.shareStopped(id)
+            refreshSharingNotification()
         default:
             guard let conn = model.shares.first(where: { $0.id == id }) else { return }
             model.shareStarting(id)
             startShareFFI(id, identity: conn.identity, onSuccess: { [weak self] handle, url in
                 self?.model.shareStarted(id, handle: handle, url: url)
                 self?.persist()
+                self?.refreshSharingNotification()
             }, onFailure: { [weak self] error in
                 self?.model.shareFailed(id, error: error)
             })
         }
+    }
+
+    func stopAllShares() {
+        for id in Array(model.activeShares.keys) {
+            if let handle = model.activeShares[id]?.handle { try? stopShare(handle: handle) }
+            model.shareStopped(id)
+        }
+        persist()
+        refreshSharingNotification()
+    }
+
+    private func refreshSharingNotification() {
+        let names = model.shares.filter { model.activeShares[$0.id] != nil }.map(\.label)
+        notifications.updateSharing(names: names)
     }
 
     /// Run the blocking `share()` FFI off the main thread and report back on the
@@ -139,6 +157,7 @@ final class AppController: ObservableObject {
             if let id = connectingUseId { model.connectConnecting(id) }
         case .connected:
             model.connectConnected()
+            if let id = connectingUseId, let name = model.label(id) { notifications.connected(name: name) }
         case .disconnecting:
             break
         case .disconnected, .invalid:
@@ -146,7 +165,11 @@ final class AppController: ObservableObject {
                 guard let self else { return }
                 let key = await self.tunnel.lastErrorKey()
                 if let key {
-                    self.model.connectFailed(SporaError(messageKey: key), id: self.connectingUseId)
+                    let attributedId = self.connectingUseId
+                    self.model.connectFailed(SporaError(messageKey: key), id: attributedId)
+                    if let id = attributedId, let name = self.model.label(id) {
+                        self.notifications.connectionLost(useId: id, name: name)
+                    }
                 } else if self.model.useConnected || self.model.useConnecting || self.model.useActiveId != nil {
                     self.model.connectDisconnected()
                 }
@@ -223,6 +246,45 @@ final class AppController: ObservableObject {
         flow = nil
         persist()
         toggleUse(id)
+    }
+
+    private var lastDeepLink: (url: String, at: Date)?
+
+    /// Handle an incoming share link (universal link `https://spora.to/s/…` or
+    /// the `spora://s/…` custom scheme). Android dispatch parity: known+active →
+    /// no-op; known → switch/connect; unknown → prefilled save sheet. Repeated
+    /// open-URL events for the same link are deduped.
+    func handleDeepLink(_ url: URL) {
+        guard let shareURL = Self.canonicalShareURL(from: url), Self.isValidShareURL(shareURL) else { return }
+        if let last = lastDeepLink, last.url == shareURL, Date().timeIntervalSince(last.at) < 3 { return }
+        lastDeepLink = (shareURL, Date())
+
+        if let existing = model.uses.first(where: { $0.url == shareURL }) {
+            model.selectedId = existing.id
+            if model.useActiveId == existing.id, model.useConnected || model.useConnecting {
+                return // already connected/connecting to this exact link
+            }
+            if let active = model.useActiveId, active != existing.id { tunnel.disconnect() }
+            toggleUse(existing.id)
+        } else {
+            flow = .saveConnection(prefillURL: shareURL)
+        }
+    }
+
+    /// Normalize a share link to its canonical `https://spora.to/s/<token>` form
+    /// (preserving the `?r=` relay hint). Returns nil for anything else.
+    static func canonicalShareURL(from url: URL) -> String? {
+        switch url.scheme {
+        case "https":
+            return (url.host == "spora.to" && url.path.hasPrefix("/s/")) ? url.absoluteString : nil
+        case "spora":
+            guard url.host == "s" else { return nil }
+            var c = URLComponents()
+            c.scheme = "https"; c.host = "spora.to"; c.path = "/s" + url.path; c.query = url.query
+            return c.url?.absoluteString
+        default:
+            return nil
+        }
     }
 
     /// Connect to a URL directly (deep links + debug harness): ensure a use

@@ -7,5 +7,13 @@
 	<array>
 		<string>packet-tunnel-provider</string>
 	</array>
+	<!-- Universal links: https://spora.to/s/<token>. Requires the server-side
+	     AASA at https://spora.to/.well-known/apple-app-site-association (a
+	     deliverable tracked in ../spora/assets). The spora:// custom scheme works
+	     without it. -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:spora.to</string>
+	</array>
 </dict>
 </plist>

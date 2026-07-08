@@ -41,9 +41,8 @@ struct SporaApp: App {
             DebugController.handle(url, model: model, controller: controller)
             #endif
         case "spora", "https":
-            // Deep link (spora://s/<token> or universal link) — wired in the
-            // deep-link phase.
-            NSLog("[spora] open url: \(url)")
+            NSApp.activate(ignoringOtherApps: true)
+            controller.handleDeepLink(url)
         default:
             break
         }
