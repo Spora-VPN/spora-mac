@@ -4,6 +4,8 @@ Native macOS client for Spora (P2P VPN through a trusted friend). Swift + SwiftU
 NetworkExtension over the Rust core at `../spora` (UniFFI). Functional reference:
 `../spora-android`. Design source of truth: `Spora macOS.dc.html` (committed direction:
 window 1b master-detail + menu-bar popover 1d/2e; see `docs/adr-001-architecture.md`).
+Distribution: Mac App Store + Developer ID direct download from spora.to
+(`docs/adr-002-distribution.md`).
 
 ## Build & run
 
@@ -27,5 +29,7 @@ window 1b master-detail + menu-bar popover 1d/2e; see `docs/adr-001-architecture
 - Errors: enum-mapped to localized strings (raw Rust messages are debug text); attributed to a
   connection at failure time; survive service teardown.
 - Identity bytes are secrets → Keychain. Share URLs are bearer credentials.
-- The tunnel appex must stay tiny and sandboxed; app-side state reconciles from NEVPNStatus +
-  provider messages.
+- The tunnel provider must stay tiny and sandboxed — one source set, packaged as an appex (Debug
+  + App Store) and a system extension (Developer ID); app-side state reconciles from
+  NEVPNStatus + provider messages. Never activate the system extension at launch, only on first
+  connect.
