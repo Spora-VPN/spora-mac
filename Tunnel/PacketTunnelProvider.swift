@@ -7,24 +7,16 @@ import Darwin
 private let IP_BOUND_IF_OPT: Int32 = 25
 private let IPV6_BOUND_IF_OPT: Int32 = 125
 
-/// Diagnostic log for the sandboxed appex — its NSLogs don't surface in
-/// `log show`, so mirror them to a file in the extension's container
-/// (`~/Library/Containers/to.spora.mac.tunnel/Data/tmp/spora-tunnel.log`).
-private let tunnelLogPath = NSHomeDirectory() + "/tmp/spora-tunnel.log"
-
+/// The extension's log lines: the unified log (subsystem `to.spora`,
+/// category `PacketTunnel`) and the core's diagnostic log file in the app
+/// group container, which the app's bug reports and uploads include.
 func tlog(_ msg: String) {
-    NSLog("[spora-tunnel] \(msg)")
-    guard let data = "\(Date()) \(msg)\n".data(using: .utf8) else { return }
-    let dir = NSHomeDirectory() + "/tmp"
-    try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-    if let fh = FileHandle(forWritingAtPath: tunnelLogPath) {
-        fh.seekToEndOfFile(); fh.write(data); try? fh.close()
-    } else {
-        FileManager.default.createFile(atPath: tunnelLogPath, contents: data)
-    }
+    SporaLog.i("PacketTunnel", msg)
 }
 
-func tlogReset() { try? FileManager.default.removeItem(atPath: tunnelLogPath) }
+/// Tells the core which network is under this process's tunnel, for its
+/// connection record. One per process; never stopped.
+private let networkReporter = NetworkReporter()
 
 /// The packet-tunnel provider (connect/use side). Stays a thin, sandboxed shim:
 /// it configures the tunnel, locates the utun fd, `dup()`s it, and hands the dup
@@ -47,7 +39,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
 
     override func startTunnel(options: [String: NSObject]?, completionHandler: @escaping (Error?) -> Void) {
         SporaKit.initLogging()
-        tlogReset()
+        networkReporter.start()
         tlog("startTunnel")
 
         guard let url = resolveURL(options: options), !url.isEmpty else {
@@ -86,7 +78,8 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     let h = try connectUtun(url: url, tunFd: dupFd, protector: protector,
-                                            mtuCallback: mtuCb, eventCallback: eventCb)
+                                            mtuCallback: mtuCb, eventCallback: eventCb,
+                                            recordDir: SporaPaths.recordDir.path)
                     self.handle = h
                     try? setKeepalive(handle: h, intervalSecs: 20) // screen-on default
                     tlog("connected, handle=\(h)")
@@ -138,7 +131,9 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             NEIPv4Route(destinationAddress: $0, subnetMask: "255.255.255.255")
         }
         settings.ipv4Settings = ipv4
-        settings.dnsSettings = NEDNSSettings(servers: ["8.8.8.8"])
+        // The tunnel's synthetic resolver: the sharer's core answers it from
+        // the sharer's own resolvers (a convention both ends are built to)
+        settings.dnsSettings = NEDNSSettings(servers: [dnsForwarderAddress()])
         settings.mtu = NSNumber(value: currentMTU)
         return settings
     }
@@ -158,13 +153,16 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         }
     }
 
-    /// Relay IPv4 addresses to keep off the tunnel: the built-in default plus any
-    /// `?r=host:port` hints carried in the share URL.
-    private static func relayHosts(from url: String) -> [String] {
+    /// Relay IPv4 addresses to keep off the tunnel: the built-in default plus
+    /// the share URL's IPv4 relays (`?r=` values, `host:port` after an
+    /// optional protocol tag such as `nz/`; names and IPv6 literals skipped).
+    static func relayHosts(from url: String) -> [String] {
         var hosts = Set(["167.71.66.250"]) // spora-core default relay
         if let comps = URLComponents(string: url) {
             for item in comps.queryItems ?? [] where item.name == "r" {
-                guard let value = item.value, let colon = value.lastIndex(of: ":") else { continue }
+                guard var value = item.value else { continue }
+                if let slash = value.firstIndex(of: "/") { value = String(value[value.index(after: slash)...]) }
+                guard let colon = value.lastIndex(of: ":") else { continue }
                 let host = String(value[..<colon])
                 var buf = in_addr()
                 if inet_pton(AF_INET, host, &buf) == 1 { hosts.insert(host) }
@@ -231,7 +229,7 @@ final class TunnelProtector: SocketProtectorCallback, @unchecked Sendable {
         let r4 = setsockopt(fd, IPPROTO_IP, IP_BOUND_IF_OPT, &v4, socklen_t(MemoryLayout<UInt32>.size))
         var v6 = ifIndex
         let r6 = setsockopt(fd, IPPROTO_IPV6, IPV6_BOUND_IF_OPT, &v6, socklen_t(MemoryLayout<UInt32>.size))
-        tlog("protect fd=\(fd) if=\(ifIndex) v4=\(r4) v6=\(r6)")
+        SporaLog.d("PacketTunnel", "protect fd=\(fd) if=\(ifIndex) v4=\(r4) v6=\(r6)")
     }
 }
 

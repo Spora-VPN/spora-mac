@@ -5,29 +5,55 @@ import SporaDesign
 /// The create-share handoff: the busy moment (design 3a) resolves into the
 /// link-ready handoff (design 2c). Copy is THE action (ember); naming happens in
 /// place — no modal (the Android share-sheet → rename moment, reimagined).
+/// When no link can be made (no relays, Spora's out of reach), the busy
+/// moment resolves into the reason instead, with the way to fix it.
 struct CreateShareView: View {
     @EnvironmentObject var model: AppModel
     @EnvironmentObject var controller: AppController
-    let handoff: AppController.ShareDraft?
+    let stage: AppController.CreateStage
     @State private var name: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if let draft = handoff { handoffContent(draft) } else { busyContent }
+            switch stage {
+            case .making: busyContent(error: nil)
+            case .failed(let error): busyContent(error: error)
+            case .ready(let draft): handoffContent(draft)
+            }
         }
         .padding(EdgeInsets(top: 20, leading: 30, bottom: 26, trailing: 30))
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
-    // 3a — creating the link
-    private var busyContent: some View {
+    // 3a — creating the link (or why it could not be made)
+    private func busyContent(error: SporaError?) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            MicroLabel(L("busy_eyebrow"))
-            DetailStatus(dot: .pending, text: "↑ " + L("busy_status"), color: SporaColor.pendingText)
-                .padding(.top, 20)
-            Text(L("busy_title")).sporaType(.display).foregroundStyle(SporaColor.textPrimary).padding(.top, 8)
-            Text(L("busy_body")).sporaType(.bodySmall).foregroundStyle(SporaColor.textMuted)
-                .frame(maxWidth: 340, alignment: .leading).padding(.top, 6)
+            MicroLabel(L(controller.isRemaking ? "new_link_busy_eyebrow" : "busy_eyebrow"))
+            if let error {
+                DetailStatus(dot: .error, text: L(error.messageKey), color: SporaColor.error, mono: false)
+                    .padding(.top, 20)
+            } else {
+                DetailStatus(dot: .pending, text: "↑ " + L("busy_status"), color: SporaColor.pendingText)
+                    .padding(.top, 20)
+            }
+            Text(L(error == nil ? "busy_title" : "make_failed_title"))
+                .sporaType(.display).foregroundStyle(SporaColor.textPrimary).padding(.top, 8)
+            if let error {
+                HStack(spacing: 22) {
+                    if error.opensRelaySettings {
+                        Button { controller.openRelaySettings() } label: {
+                            MicroLabel(L("action_open_settings") + " →", color: SporaColor.textPrimary)
+                        }.buttonStyle(.plain)
+                    }
+                    Button { controller.retryCreateShare() } label: {
+                        MicroLabel(L("retry") + " →", color: SporaColor.textPrimary)
+                    }.buttonStyle(.plain)
+                }
+                .padding(.top, 12)
+            } else {
+                Text(L("busy_body")).sporaType(.bodySmall).foregroundStyle(SporaColor.textMuted)
+                    .frame(maxWidth: 340, alignment: .leading).padding(.top, 6)
+            }
             HStack {
                 Text("spora.to/s/··········").font(SporaFont.mono(15, .medium)).foregroundStyle(SporaColor.textMuted)
                 Spacer()
@@ -47,10 +73,11 @@ struct CreateShareView: View {
         }
     }
 
-    // 2c — link ready, sharing; copy + name in place
+    // 2c — link ready, sharing; copy + name in place (a new link for a saved
+    // share keeps its name)
     private func handoffContent(_ draft: AppController.ShareDraft) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            MicroLabel(L("new_share_eyebrow"))
+            MicroLabel(L(draft.isNew ? "new_share_eyebrow" : "new_link_eyebrow"))
             DetailStatus(dot: .active, text: "↑ " + L("st_sharing"), color: SporaColor.successText,
                          since: model.activeShares[draft.id]?.startedAt)
                 .padding(.top, 22)
@@ -71,15 +98,17 @@ struct CreateShareView: View {
                 .padding(.top, 14)
             Text(L("copy_link_hint")).sporaType(.bodySmall).foregroundStyle(SporaColor.textMuted).padding(.top, 10)
 
-            InputField(label: L("name_label"), placeholder: L("name_placeholder"),
-                       text: $name, helper: L("name_helper"))
-                .frame(maxWidth: 400)
-                .padding(.top, 26)
-                .onChange(of: name) { new in
-                    if !new.trimmingCharacters(in: .whitespaces).isEmpty {
-                        controller.rename(shareId: draft.id, to: new)
+            if draft.isNew {
+                InputField(label: L("name_label"), placeholder: L("name_placeholder"),
+                           text: $name, helper: L("name_helper"))
+                    .frame(maxWidth: 400)
+                    .padding(.top, 26)
+                    .onChange(of: name) { new in
+                        if !new.trimmingCharacters(in: .whitespaces).isEmpty {
+                            controller.rename(shareId: draft.id, to: new)
+                        }
                     }
-                }
+            }
 
             Spacer()
             HStack {
@@ -117,7 +146,7 @@ struct SaveConnectionSheet: View {
                 .padding(.top, 20)
             VStack(spacing: 2) {
                 SporaButton(L("sheet_save"), variant: .primary, action: save)
-                SporaButton(L("cancel"), variant: .text, action: controller.dismissFlow)
+                SporaButton(L("cancel"), variant: .text) { controller.sheet = nil }
             }
             .padding(.top, 24)
         }

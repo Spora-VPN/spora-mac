@@ -14,6 +14,11 @@ import SporaKit
 ///   spora-debug://share-starting|started|failed|stopped?id=<id>[&url=][&err=]
 ///   spora-debug://connect-connecting|connected|failed|disconnected?id=<id>[&err=]
 ///   spora-debug://select?id=<id>   ·   reset   ·   shot?name=<n>   ·   quit
+///   spora-debug://settings?page=list|relays|telemetry   ·   settings-close
+///   spora-debug://relays?spora=1|0&own=<host:port>[,…]&tokens=1,0,…  (in memory)
+///   spora-debug://make-failed?err=NO_RELAYS   ·   make-new-link?id=   ·   delete[?id=]   ·   toggle[?id=]
+///   spora-debug://feedback   ·   telemetry-required   ·   export-report   ·   telemetry?on=1|0
+///   spora-debug://sheet?name=relay-add|relay-edit|relay-remove&index=<i>
 @MainActor
 enum DebugController {
     static var artifactsDir: URL = {
@@ -27,19 +32,26 @@ enum DebugController {
     // Belarusian sample names (design canvas parity).
     private static let shareNames = ["Мамін тэлефон", "Тэлефон Алесі", "Працоўны ноўтбук", "Стары планшэт", "Backup"]
     private static let useNames = ["Дом Даны", "Кватэра ў Берліне"]
-    private static let debugIdentity = Data("debug".utf8) // intentionally invalid → exercises real error path
+    // Not a share: toggling a seeded share on calls the real startShare() and
+    // fails, which conveniently exercises the error path.
+    private static let debugShare = Data("debug".utf8)
 
     static func handle(_ url: URL, model: AppModel, controller: AppController) {
         guard url.scheme == "spora-debug" else { return }
         let cmd = url.host ?? ""
         let q = queryItems(url)
-        NSLog("[spora-debug] cmd=\(cmd) args=\(q)")
+        SporaLog.d("DebugController", "cmd=\(cmd) args=\(q)")
 
         switch cmd {
         case "shot": shoot(name: q["name"] ?? "shot")
         case "popover": shootPopover(name: q["name"] ?? "popover", model: model, controller: controller)
         case "quit": NSApp.terminate(nil)
-        case "reset": controller.loadPersisted()
+        case "reset":
+            controller.loadPersisted()
+            controller.service.reloadRelays()
+            controller.settingsPages = []
+            controller.dismissFlow()
+            controller.sheet = nil
         case "seed":
             controller.persistenceSuppressed = true
             seed(model, shares: Int(q["shares"] ?? "0") ?? 0, uses: Int(q["uses"] ?? "0") ?? 0)
@@ -51,7 +63,46 @@ enum DebugController {
             if let url = model.shares.compactMap({ model.shareURL($0.id) }).first {
                 controller.connectToURL(url)
             }
-        case "select": model.selectedId = q["id"]
+        case "select": if let id = q["id"] { controller.select(id) }
+        case "settings":
+            switch q["page"] {
+            case "relays": controller.settingsPages = [.list, .relays]
+            case "telemetry": controller.settingsPages = [.list, .telemetry]
+            default: controller.openSettings()
+            }
+        case "settings-close": controller.settingsPages = []
+        case "relays":
+            let own = (q["own"] ?? "").split(separator: ",").map(String.init)
+            let tokens = (q["tokens"] ?? "").split(separator: ",").map { $0 == "1" }
+            controller.service.seedRelays(RelaySettings(
+                useSpora: q["spora"] != "0",
+                own: own.enumerated().map { i, e in
+                    OwnRelay(endpoint: e, token: tokens.indices.contains(i) && tokens[i] ? "debug-token" : nil)
+                }
+            ))
+        case "make-failed": controller.flow = .createShare(.failed(SporaError(token: q["err"])))
+        case "make-new-link": if let id = q["id"] { controller.makeNewLink(id) }
+        case "toggle": // the real toggle of a saved connection (startShare / the tunnel)
+            if let id = q["id"] ?? model.selectedId {
+                if model.shares.contains(where: { $0.id == id }) { controller.toggleShare(id) } else { controller.toggleUse(id) }
+            }
+        case "delete": // a real (persisted) connection, as the detail's DELETE does
+            if let id = q["id"] ?? model.selectedId { controller.select(id); controller.deleteSelected() }
+        case "feedback": controller.openFeedback()
+        case "export-report": // the bug report alone, without the share picker
+            Task.detached { _ = BugReport.export(note: "harness") }
+        case "telemetry": // the real upload switch
+            Task { _ = await controller.service.setUploadEnabled(q["on"] == "1") }
+        case "telemetry-required": controller.showTelemetryRequired()
+        case "sheet":
+            let index = Int(q["index"] ?? "0") ?? 0
+            switch q["name"] {
+            case "relay-add": controller.sheet = .relayEditor(index: nil)
+            case "relay-edit": controller.sheet = .relayEditor(index: index)
+            case "relay-remove": controller.sheet = .removeRelay(index: index)
+            case "connect": controller.sheet = .saveConnection(prefillURL: nil)
+            default: controller.sheet = nil
+            }
         case "share-starting": if let id = q["id"] { model.shareStarting(id) }
         case "share-started":
             if let id = q["id"] {
@@ -64,7 +115,7 @@ enum DebugController {
             model.connectConnecting(q["id"]); model.connectConnected()
         case "connect-failed": model.connectFailed(SporaError(token: q["err"]), id: q["id"])
         case "connect-disconnected": model.connectDisconnected()
-        default: NSLog("[spora-debug] unknown cmd: \(cmd)")
+        default: SporaLog.w("DebugController", "unknown cmd: \(cmd)")
         }
     }
 
@@ -75,7 +126,7 @@ enum DebugController {
             shareConns.append(ShareConnection(
                 id: id,
                 label: shareNames[i % shareNames.count],
-                identity: debugIdentity,
+                share: debugShare,
                 createdAt: Date().addingTimeInterval(-Double(i + 1) * 30 * 86400)
             ))
         }
@@ -124,7 +175,7 @@ enum DebugController {
                 try? png.write(to: dir.appendingPathComponent("icon_\(px).png"))
             }
         }
-        NSLog("[spora-debug] app icon PNGs written to \(dir.path)")
+        SporaLog.d("DebugController", "app icon PNGs written to \(dir.path)")
     }
 
     /// Render the four menu-bar icon states (scaled up, on white) so the tray
@@ -147,7 +198,7 @@ enum DebugController {
               let png = rep.representation(using: .png, properties: [:]) else { return }
         try? FileManager.default.createDirectory(at: artifactsDir, withIntermediateDirectories: true)
         try? png.write(to: artifactsDir.appendingPathComponent("icon-preview.png"))
-        NSLog("[spora-debug] icon-preview written (states: \(states.map(\.0)))")
+        SporaLog.d("DebugController", "icon-preview written (states: \(states.map(\.0)))")
     }
 
     private static func queryItems(_ url: URL) -> [String: String] {
@@ -166,19 +217,26 @@ enum DebugController {
             guard let window = mainWindow(),
                   let view = window.contentView,
                   let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else {
-                NSLog("[spora-debug] shot: no window / bitmap")
+                SporaLog.d("DebugController", "shot: no window / bitmap")
                 return
             }
             view.cacheDisplay(in: view.bounds, to: rep)
             guard let png = rep.representation(using: .png, properties: [:]) else { return }
             let dir = artifactsDir
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            // A sheet is its own window: captured next to the window's shot
+            if let sheet = window.attachedSheet?.contentView,
+               let sheetRep = sheet.bitmapImageRepForCachingDisplay(in: sheet.bounds) {
+                sheet.cacheDisplay(in: sheet.bounds, to: sheetRep)
+                try? sheetRep.representation(using: .png, properties: [:])?
+                    .write(to: dir.appendingPathComponent("\(name)-sheet.png"))
+            }
             let out = dir.appendingPathComponent("\(name).png")
             do {
                 try png.write(to: out)
-                NSLog("[spora-debug] shot: wrote \(out.path) (\(rep.pixelsWide)x\(rep.pixelsHigh))")
+                SporaLog.d("DebugController", "shot: wrote \(out.path) (\(rep.pixelsWide)x\(rep.pixelsHigh))")
             } catch {
-                NSLog("[spora-debug] shot: write failed: \(error)")
+                SporaLog.d("DebugController", "shot: write failed: \(error)")
             }
         }
     }
@@ -209,7 +267,7 @@ enum DebugController {
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             let out = dir.appendingPathComponent("\(name).png")
             try? png.write(to: out)
-            NSLog("[spora-debug] popover: wrote \(out.path) (\(rep.pixelsWide)x\(rep.pixelsHigh))")
+            SporaLog.d("DebugController", "popover: wrote \(out.path) (\(rep.pixelsWide)x\(rep.pixelsHigh))")
             window.close()
         }
     }

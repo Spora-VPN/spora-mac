@@ -13,5 +13,11 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
+	<!-- Shared with the other half (app / tunnel extension): connection records
+	     and the diagnostic log live in the group container (SporaPaths). -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>$(SPORA_APP_GROUP)</string>
+	</array>
 </dict>
 </plist>

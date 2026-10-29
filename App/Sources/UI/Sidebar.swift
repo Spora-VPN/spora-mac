@@ -4,10 +4,12 @@ import SporaDesign
 
 /// The 248px master sidebar (committed direction 1b): brand lockup, aggregate
 /// status block, both connection lists (shape-coded), and the two primary
-/// actions pinned at the foot. The sidebar *is* the connection list — selecting
-/// a row drives the detail pane.
+/// actions pinned at the foot, with settings and feedback under them (the
+/// design's quiet mono rows). The sidebar *is* the connection list —
+/// selecting a row drives the detail pane.
 struct Sidebar: View {
     @EnvironmentObject var model: AppModel
+    @EnvironmentObject var controller: AppController
     var onCreateShare: () -> Void
     var onConnect: () -> Void
 
@@ -72,11 +74,31 @@ struct Sidebar: View {
         VStack(spacing: 2) {
             footerAction(L("action_share_internet"), action: onCreateShare)
             footerAction(L("action_connect_friend"), action: onConnect)
+            Rectangle().fill(SporaColor.borderDivider).frame(height: 1)
+                .padding(.horizontal, 10).padding(.vertical, 4)
+            quietAction(L("sidebar_settings"), icon: .settings, selected: !controller.settingsPages.isEmpty,
+                        action: controller.openSettings)
+            quietAction(L("sidebar_feedback"), icon: .feedback, selected: false, action: controller.openFeedback)
         }
         .padding(EdgeInsets(top: 10, leading: 10, bottom: 12, trailing: 10))
         .overlay(alignment: .top) {
             Rectangle().fill(SporaColor.borderDivider).frame(height: 1)
         }
+    }
+
+    private func quietAction(_ title: String, icon: SporaIcon.Glyph, selected: Bool,
+                             action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                SporaIcon(icon, size: 15).foregroundStyle(selected ? SporaColor.textPrimary : SporaColor.textMuted)
+                MicroLabel(title, color: selected ? SporaColor.textPrimary : SporaColor.textMuted)
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(RowButtonStyle())
     }
 
     private func footerAction(_ title: String, action: @escaping () -> Void) -> some View {
@@ -101,17 +123,18 @@ struct Sidebar: View {
 /// filled highlight.
 struct SidebarRow: View {
     @EnvironmentObject var model: AppModel
+    @EnvironmentObject var controller: AppController
     let id: String
     let name: String
     let state: DisplayState
     let role: Role
 
-    private var isSelected: Bool { model.selectedId == id }
+    private var isSelected: Bool { model.selectedId == id && controller.settingsPages.isEmpty }
     private var isInactive: Bool { state == .inactive }
 
     var body: some View {
         Button {
-            model.selectedId = id
+            controller.select(id)
         } label: {
             HStack(spacing: 10) {
                 Text(name)

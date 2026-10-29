@@ -91,8 +91,11 @@ struct ConnectionDetail: View {
                 .foregroundStyle(SporaColor.textPrimary)
                 .padding(.top, 8)
 
-            if case .error = state {
-                RetryRow { controller.retry(selection) }.padding(.top, 12)
+            if case .error(let error) = state {
+                RetryRow(title: L(error == .shareLinkLost ? "share_new_link" : "retry")) {
+                    controller.retry(selection)
+                }
+                .padding(.top, 12)
             }
             if isActive {
                 Barcode(seed: Fmt.seed(selection.id), bars: 132, height: 26).padding(.top, 16)
@@ -280,11 +283,14 @@ struct DetailStatus: View {
     }
 }
 
+/// The action an error offers (RETRY, or MAKE A NEW LINK for a share under
+/// a lost device identity).
 struct RetryRow: View {
+    var title = L("retry")
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            MicroLabel(L("retry") + " →", color: SporaColor.textPrimary)
+            MicroLabel(title + " →", color: SporaColor.textPrimary)
         }.buttonStyle(.plain)
     }
 }

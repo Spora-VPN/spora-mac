@@ -9,19 +9,28 @@ public struct InputField: View {
     @Binding private var text: String
     private let helper: String?
     private let error: String?
+    private let multiline: Bool
+    private let mono: Bool
 
+    /// - Parameters:
+    ///   - multiline: grows downward as the text wraps (a message body).
+    ///   - mono: data entry (addresses, tokens) in the mono face.
     public init(
         label: String? = nil,
         placeholder: String = "",
         text: Binding<String>,
         helper: String? = nil,
-        error: String? = nil
+        error: String? = nil,
+        multiline: Bool = false,
+        mono: Bool = false
     ) {
         self.label = label
         self.placeholder = placeholder
         self._text = text
         self.helper = helper
         self.error = error
+        self.multiline = multiline
+        self.mono = mono
     }
 
     public var body: some View {
@@ -29,9 +38,9 @@ public struct InputField: View {
             if let label {
                 Text(label).sporaType(.micro).foregroundStyle(SporaColor.textMuted)
             }
-            TextField(placeholder, text: $text)
+            field
                 .textFieldStyle(.plain)
-                .font(SporaFont.sans(21))
+                .font(mono ? SporaFont.mono(16) : SporaFont.sans(multiline ? 15 : 21))
                 .foregroundStyle(SporaColor.textPrimary)
                 .tint(SporaColor.primary)
                 .padding(.top, 8)
@@ -56,6 +65,14 @@ public struct InputField: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 8)
             }
+        }
+    }
+
+    @ViewBuilder private var field: some View {
+        if multiline {
+            TextField(placeholder, text: $text, axis: .vertical).lineLimit(3...8)
+        } else {
+            TextField(placeholder, text: $text)
         }
     }
 }

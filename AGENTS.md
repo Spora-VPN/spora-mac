@@ -11,11 +11,68 @@ Distribution: Mac App Store + Developer ID direct download from spora.to
 
 - `scripts/dev.sh build` — build app (xcodebuild via XcodeGen's `project.yml`).
 - `scripts/dev.sh run` / `quit` / `shot [name]` / `state <cmd> [k=v…]` / `log` — the feedback
-  harness; screenshots land in `artifacts/`. State-seeding vocabulary matches Android's
-  `DebugStateReceiver` (`seed`, `share-starting|started|failed|stopped`,
-  `connect-connecting|connected|failed|disconnected`, `reset`).
+  harness; screenshots land in `artifacts/` (an open sheet as `<name>-sheet.png`). State-seeding
+  vocabulary matches Android's `DebugStateReceiver` (`seed`, `share-starting|started|failed|stopped`,
+  `connect-connecting|connected|failed|disconnected`, `reset`; `err=` takes `SHARE_LINK_LOST`,
+  `NO_RELAYS`, …). macOS extras (full list in `DebugController.swift`): `settings?page=`,
+  `relays?spora=&own=&tokens=` (in memory), `make-failed?err=`, `sheet?name=`, `feedback`,
+  `telemetry-required`, and real actions: `create-share`, `toggle`, `make-new-link`, `delete`,
+  `export-report`, `telemetry?on=`.
+- `xcodebuild … -scheme Spora test` runs `SporaKitTests` (relay-address checks, error mapping,
+  `SPORA_API` parsing, the store migration).
 - Rust FFI: `../spora/build-ffi-apple.sh` builds the staticlib + Swift bindings into
-  `rust-out/` here. Rust changes are made in `../spora` (its own repo — commit separately).
+  `rust-out/` here (gitignored: rebuild it after pulling the core). Built against core
+  `8f61d4c`. Rust changes are made in `../spora` (its own repo — commit separately).
+- **Never contact production from development.** Spora's relays are on by default, so the
+  first start registers the Mac with the core's API. Debug builds read `SPORA_API`
+  (comma-separated, as the CLI reads it; set but blank is refused, never production); release
+  builds always use the built-in production API. `dev.sh run` pins `SPORA_API` to
+  `http://127.0.0.1:9` (answers nothing) unless it is set; a debug build launched any other way
+  without it talks to production.
+
+## Core service, relays, diagnostics
+
+The core's `spora-service` (via the FFI) holds the device identity, the access to Spora's
+relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays and shares",
+"Diagnostics") is the reference; the macOS specifics:
+
+- **Startup** (`SporaApp.init`): `SporaKit.initLogging()` (the diagnostic log file), crash
+  capture (uncaught ObjC exceptions → `writeCrash`), then `ServiceHost` starts the service off
+  the main thread (`initService`: state key from the Keychain, minted and saved on the first
+  run; `manageRelays` when Spora's relays are on or a saved share uses them). Every share call
+  awaits it (`awaitReady`); a failed start is retried on foreground. Only the app runs the
+  service.
+- **Shares** are the core's: an immutable blob per link (`makeShare` via `ShareMaker`, on the
+  relays the settings name), in the Keychain (`SecretStore.shares`); the URL is `shareUrl(blob)`,
+  never stored. `startShare` gets a per-share connection log (`connlog/<share id>`) and the
+  record dir. A blob made under another device identity fails with `IdentityMismatch` →
+  `shareLinkLost`, whose action is MAKE A NEW LINK (new blob, same id and name). Shares saved
+  before this (identity-based, `spora.connections.v1`) are dropped at load.
+- **Settings** open in the window's detail region as a page stack (`AppController.settingsPages`):
+  the sidebar's SETTINGS / ⌘, opens the list, OPEN SETTINGS under a make error opens Relays
+  alone. Relays: Spora's on/off + the user's own relays (checked as the core parses `?r=`;
+  tokens sent as `RelayCredential.static`, never in the URL), stored in the Keychain. Telemetry:
+  the upload switch; the force notice (`TelemetryRequiredSheet`) has one owner,
+  `AppController`. Pages poll the service every 2 s while open.
+- **Feedback** (sidebar, Help menu, the force notice): `exportBugReport` zip into
+  `~/Library/Caches/to.spora.mac/reports` (pruned after a day), handed to the share picker
+  with support@spora.to prefilled for Mail. No Spora server involved.
+- **Where things live**: records (`records/`) and the diagnostic log (`diag/`) in the app group
+  container `$(DEVELOPMENT_TEAM).to.spora.mac` (`SPORA_APP_GROUP`), because the tunnel
+  extension writes them too and the app's service bundles and uploads them; the service state
+  (`service/`) and connection logs (`connlog/`) in Application Support/Spora. All excluded from
+  Time Machine. The system-extension packaging (ADR-002) runs as root, so its group container
+  is not the user's: it will need another way to hand records over.
+- **Logging: `SporaLog` (d/i/w/e), never `NSLog`/`print`.** Unified log (subsystem
+  `to.spora`) plus the core's diagnostic log file. Never log a blob, a token or a URL.
+- `NetworkReporter` (NWPathMonitor, utun excluded) tells the core the underlying network, in
+  each process that runs tunnels: the app (shares) and the tunnel extension.
+- The tunnel extension: `initLogging` into the shared log, `connectUtun(recordDir:)`, and the
+  sharer's DNS forwarder (`dnsForwarderAddress()`) as the tunnel's resolver.
+- FFI calls that touch files or the network (`initService`, `refreshRelays`, `makeShare`,
+  `startShare`, `setTelemetryEnabled`, `acknowledgeTelemetryNotice`, `exportBugReport`) run off
+  the main thread (`offMain`); `logLine`, `telemetryStatus`, `relayAccessStatus` and the blob
+  accessors are cheap.
 
 ## Rules
 
@@ -28,7 +85,8 @@ Distribution: Mac App Store + Developer ID direct download from spora.to
 - Status arrows: ↑ share, ↓ use. Dual role shows both lines, no collapse.
 - Errors: enum-mapped to localized strings (raw Rust messages are debug text); attributed to a
   connection at failure time; survive service teardown.
-- Identity bytes are secrets → Keychain. Share URLs are bearer credentials.
+- Secrets → Keychain (`SecretStore`): share blobs, the service's state key, relay tokens. Share
+  URLs are bearer credentials.
 - The tunnel provider must stay tiny and sandboxed — one source set, packaged as an appex (Debug
   + App Store) and a system extension (Developer ID); app-side state reconciles from
   NEVPNStatus + provider messages. Never activate the system extension at launch, only on first

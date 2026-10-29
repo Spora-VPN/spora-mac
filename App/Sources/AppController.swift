@@ -4,20 +4,34 @@ import NetworkExtension
 import SporaKit
 
 /// Owns the app-level actions and UI-flow state that sit above the pure
-/// `AppModel` store. Share mode runs **in-process** (ADR D3) via the real Rust
-/// `share()` FFI, with connections persisted (`ConnectionStore`). Connect mode
-/// still simulates (it needs the tunnel appex, which is signing-blocked per
-/// ADR D5).
+/// `AppModel` store. Share mode runs **in-process** (ADR D3): shares are the
+/// core's (a blob per link, made by `ShareMaker` on the relays the settings
+/// name, under the device identity the core's service keeps) and run through
+/// `startShare`; connections are persisted (`ConnectionStore`). Connect mode
+/// runs in the tunnel appex and is reconciled from `NEVPNStatus`.
 @MainActor
 final class AppController: ObservableObject {
+    private static let tag = "AppController"
+
     let model: AppModel
+    let service: ServiceController
     private let store: ConnectionStore
 
-    /// Presented modal flow (save-connection sheet / create-share handoff).
+    /// The create-share flow, shown in the detail region.
     @Published var flow: Flow?
+    /// The modal sheet over the window (one at a time).
+    @Published var sheet: Sheet?
+    /// The open settings pages, shown in the detail region; the last is
+    /// shown, and back drops it. Empty: closed.
+    @Published var settingsPages: [SettingsPage] = []
 
-    /// The share currently being created (for cancel before the handoff).
-    private var creatingShareId: String?
+    /// The share the create flow is making and starting (`replacing`: a new
+    /// link for a saved share), for cancel and for results that arrive after.
+    private var creating: (token: UUID, shareId: String?, replacing: Bool)?
+
+    /// The pending start of each share: a stop while `startShare` is still
+    /// blocked drops it, and the session it then returns is stopped.
+    private var startTokens: [String: UUID] = [:]
 
     /// When the harness seeds fake state, suppress persistence so debug data
     /// never reaches disk (real data reloads on `reset`).
@@ -30,18 +44,45 @@ final class AppController: ObservableObject {
     private var connectingUseId: String?
 
     enum Flow: Equatable {
-        case saveConnection(prefillURL: String?)   // sheet 1g
-        case createShare(handoff: ShareDraft?)     // busy 3a → handoff 2c
+        case createShare(CreateStage)   // busy 3a → handoff 2c
     }
 
-    /// A freshly created share awaiting copy + naming (design 2c).
+    enum CreateStage: Equatable {
+        case making
+        /// No link could be made (no relays, Spora unreachable, …).
+        case failed(SporaError)
+        case ready(ShareDraft)
+    }
+
+    /// A freshly made share awaiting copy (+ naming, when new) (design 2c).
     struct ShareDraft: Equatable {
         var id: String
         var url: String
+        /// A new share (offer to name it), not a new link for a saved one.
+        var isNew: Bool
     }
 
-    init(model: AppModel, store: ConnectionStore = ConnectionStore()) {
+    enum Sheet: Identifiable, Equatable {
+        case saveConnection(prefillURL: String?)   // sheet 1g
+        case relayEditor(index: Int?)               // nil: add a relay
+        case removeRelay(index: Int)
+        case feedback
+        case telemetryRequired
+
+        var id: String {
+            switch self {
+            case .saveConnection: return "save"
+            case .relayEditor(let i): return "relay-\(i ?? -1)"
+            case .removeRelay(let i): return "remove-\(i)"
+            case .feedback: return "feedback"
+            case .telemetryRequired: return "telemetry-required"
+            }
+        }
+    }
+
+    init(model: AppModel, service: ServiceController, store: ConnectionStore = ConnectionStore()) {
         self.model = model
+        self.service = service
         self.store = store
         loadPersisted()
         notifications.configure(controller: self)
@@ -65,14 +106,15 @@ final class AppController: ObservableObject {
         let loaded = store.load()
         model.reset()
         model.setConnections(shares: loaded.shares, uses: loaded.uses)
-        for (id, url) in loaded.urls { model.registerShareURL(id, url) }
+        for s in loaded.shares {
+            if let url = s.url { model.registerShareURL(s.id, url) }
+        }
         model.selectedId = loaded.shares.first?.id ?? loaded.uses.first?.id
     }
 
-    private func persist(writeIdentities: Bool = false) {
+    private func persist(writeBlobs: Bool = false) {
         guard !persistenceSuppressed else { return }
-        store.save(shares: model.shares, uses: model.uses, urls: model.shareURLs,
-                   writeIdentities: writeIdentities)
+        store.save(shares: model.shares, uses: model.uses, writeBlobs: writeBlobs)
     }
 
     // MARK: - Share toggles (real, in-process)
@@ -80,29 +122,27 @@ final class AppController: ObservableObject {
     func toggleShare(_ id: String) {
         switch model.shareState(id) {
         case .active, .pending:
-            if let handle = model.activeShares[id]?.handle { try? stopShare(handle: handle) }
-            model.shareStopped(id)
+            stopShareSession(id)
             refreshSharingNotification()
         default:
             guard let conn = model.shares.first(where: { $0.id == id }) else { return }
-            model.shareStarting(id)
-            startShareFFI(id, identity: conn.identity, onSuccess: { [weak self] handle, url in
-                self?.model.shareStarted(id, handle: handle, url: url)
-                self?.persist()
-                self?.refreshSharingNotification()
-            }, onFailure: { [weak self] error in
-                self?.model.shareFailed(id, error: error)
-            })
+            startShareSession(conn, onStarted: { [weak self] in self?.refreshSharingNotification() })
         }
     }
 
     func stopAllShares() {
-        for id in Array(model.activeShares.keys) {
-            if let handle = model.activeShares[id]?.handle { try? stopShare(handle: handle) }
-            model.shareStopped(id)
+        for id in Array(model.activeShares.keys) + Array(model.startingShares) {
+            stopShareSession(id)
         }
-        persist()
         refreshSharingNotification()
+    }
+
+    private func stopShareSession(_ id: String) {
+        startTokens[id] = nil
+        if let handle = model.activeShares[id]?.handle {
+            Task.detached { try? stopShare(handle: handle) }
+        }
+        model.shareStopped(id)
     }
 
     private func refreshSharingNotification() {
@@ -110,24 +150,51 @@ final class AppController: ObservableObject {
         notifications.updateSharing(names: names)
     }
 
-    /// Run the blocking `share()` FFI off the main thread and report back on the
-    /// main actor. `share()` returns the (stable, identity-derived) URL fast; the
-    /// relay registration proceeds in Rust's background task.
-    private func startShareFFI(_ id: String, identity: Data,
-                               onSuccess: @escaping (Int32, String) -> Void,
-                               onFailure: @escaping (SporaError) -> Void) {
-        Task.detached {
+    /// Start a share's session: the blocking `startShare` runs off the main
+    /// thread once the service is up, and reports back here. It never touches
+    /// the network itself (Spora's relays get the relay token the service has
+    /// cached, and every renewal).
+    private func startShareSession(_ conn: ShareConnection,
+                                   onStarted: (() -> Void)? = nil,
+                                   onFailed: ((SporaError) -> Void)? = nil) {
+        let id = conn.id
+        let token = UUID()
+        startTokens[id] = token
+        model.shareStarting(id)
+        let blob = conn.share
+        Task { [weak self] in
             do {
-                let result = try share(identityBytes: identity, protector: nil,
-                                       connLogDir: nil, connLogRetentionDays: nil,
-                                       connLogSessionsOnly: false)
-                await MainActor.run { onSuccess(result.handle, result.url) }
+                guard await ServiceHost.shared.awaitReady() else { throw ShareError.NotInitialized }
+                let result = try await offMain {
+                    // The connection log is a liability record for the sharer,
+                    // so it is always on; one directory per share (the core
+                    // binds a database to the share that created it)
+                    try startShare(shareBlob: blob, protector: nil,
+                                   connLogDir: SporaPaths.connLogDir(shareId: try shareId(shareBlob: blob)).path,
+                                   connLogRetentionDays: nil, connLogSessionsOnly: false,
+                                   recordDir: SporaPaths.recordDir.path)
+                }
+                guard let self, self.startTokens[id] == token else {
+                    // Stopped (or deleted) while startShare was blocked: the
+                    // session it just created must be stopped, not surfaced
+                    try? await offMain { try stopShare(handle: result.handle) }
+                    return
+                }
+                self.startTokens[id] = nil
+                self.model.shareStarted(id, handle: result.handle, url: result.url)
+                onStarted?()
             } catch {
+                SporaLog.e(Self.tag, "share failed for \(id)", error)
+                guard let self, self.startTokens[id] == token else { return }
+                self.startTokens[id] = nil
                 let mapped = SporaError.from(error, defaultCase: .shareFailed)
-                await MainActor.run { onFailure(mapped) }
+                self.model.shareFailed(id, error: mapped)
+                onFailed?(mapped)
             }
         }
     }
+
+    // MARK: - Use toggles (tunnel appex)
 
     func toggleUse(_ id: String) {
         switch model.useState(id) {
@@ -143,6 +210,7 @@ final class AppController: ObservableObject {
                     try await self.tunnel.connect(url: use.url)
                 } catch {
                     // Most commonly the user declined the VPN-approval dialog.
+                    SporaLog.w(Self.tag, "tunnel not started", error)
                     self.model.connectFailed(.vpnPermissionDenied, id: id)
                     self.connectingUseId = nil
                 }
@@ -180,46 +248,93 @@ final class AppController: ObservableObject {
         }
     }
 
-    // MARK: - Actions
+    // MARK: - Making shares
 
-    /// Create a new share: mint a fresh identity, persist it, and start a real
-    /// in-process share — the busy moment (3a) resolves into the link handoff
-    /// (2c) with the real, stable URL, or into the share's error state.
+    /// Create a new share: make it on the relays the settings name, persist
+    /// it, and start it — the busy moment (3a) resolves into the link handoff
+    /// (2c) with its URL, into the share's error state, or (no link could be
+    /// made) into the reason, with the way to fix it.
     func beginCreateShare() {
-        let n = model.shares.count + 1
-        let id = "share-\(UUID().uuidString.lowercased())"
-        let identity = makeIdentity()
-        let conn = ShareConnection(id: id, label: Lf("share_default_label", n),
-                                   identity: identity, createdAt: Date())
-        model.setConnections(shares: model.shares + [conn], uses: model.uses)
-        model.shareStarting(id)
-        model.selectedId = id
-        creatingShareId = id
-        flow = .createShare(handoff: nil)
-        persist(writeIdentities: true) // persist the connection + identity now
+        settingsPages = []
+        make(replacing: nil)
+    }
 
-        startShareFFI(id, identity: identity, onSuccess: { [weak self] handle, url in
-            guard let self, self.creatingShareId == id else { return }
-            self.model.shareStarted(id, handle: handle, url: url)
-            self.persist()
-            self.flow = .createShare(handoff: ShareDraft(id: id, url: url))
-        }, onFailure: { [weak self] error in
-            guard let self, self.creatingShareId == id else { return }
-            self.model.shareFailed(id, error: error)
-            self.creatingShareId = nil
+    /// The share was made under a device identity this Mac no longer has:
+    /// give it a new share (a new link, to send again) on the relays the
+    /// settings name now. Name and place in the list stay.
+    func makeNewLink(_ id: String) {
+        guard model.shares.contains(where: { $0.id == id }) else { return }
+        settingsPages = []
+        model.selectedId = id
+        make(replacing: id)
+    }
+
+    /// The create flow is giving a saved share a new link (not a new share).
+    var isRemaking: Bool { creating?.replacing == true }
+
+    /// Try again after no link could be made.
+    func retryCreateShare() {
+        make(replacing: creating?.replacing == true ? creating?.shareId : nil)
+    }
+
+    private func make(replacing replaceId: String?) {
+        let token = UUID()
+        creating = (token, replaceId, replaceId != nil)
+        flow = .createShare(.making)
+        let settings = service.relaySettings
+        Task { [weak self] in
+            let made = await ShareMaker.make(settings: settings)
+            guard let self, self.creating?.token == token else { return }
+            switch made {
+            case .failure(let error):
+                self.flow = .createShare(.failed(error))
+            case .success(let blob):
+                self.made(blob, replacing: replaceId, token: token)
+            }
+        }
+    }
+
+    private func made(_ blob: Data, replacing replaceId: String?, token: UUID) {
+        guard let url = try? shareUrl(shareBlob: blob) else {
+            flow = .createShare(.failed(.shareFailed))
+            return
+        }
+        let id: String
+        if let replaceId {
+            id = replaceId
+            model.replaceShare(id, share: blob, url: url)
+        } else {
+            id = "share-\(UUID().uuidString.lowercased())"
+            let n = model.shares.count + 1
+            let conn = ShareConnection(id: id, label: Lf("share_default_label", n), share: blob, createdAt: Date())
+            model.setConnections(shares: model.shares + [conn], uses: model.uses)
+            model.registerShareURL(id, url)
+        }
+        model.selectedId = id
+        creating = (token, id, replaceId != nil)
+        persist(writeBlobs: true) // the share holds its secret: saved before it runs
+        guard let conn = model.shares.first(where: { $0.id == id }) else { return }
+        startShareSession(conn, onStarted: { [weak self] in
+            guard let self, self.creating?.token == token else { return }
+            self.flow = .createShare(.ready(ShareDraft(id: id, url: url, isNew: replaceId == nil)))
+            self.refreshSharingNotification()
+        }, onFailed: { [weak self] _ in
+            guard let self, self.creating?.token == token else { return }
+            self.creating = nil
             self.flow = nil // dismiss busy → detail shows the share in error
         })
     }
 
-    /// Cancel share creation before the link is ready — remove the draft.
+    /// Cancel share creation before the link is ready. A share being made is
+    /// dropped; a new one being started is removed (it was never sent); a
+    /// saved share given a new link keeps it, stopped.
     func cancelCreateShare() {
-        if let id = creatingShareId {
-            if let handle = model.activeShares[id]?.handle { try? stopShare(handle: handle) }
-            model.removeShare(id)
-            store.deleteIdentity(id)
+        if let creating, let id = creating.shareId, model.shares.contains(where: { $0.id == id }) {
+            stopShareSession(id)
+            if !creating.replacing { model.removeShare(id) }
             persist()
         }
-        creatingShareId = nil
+        creating = nil
         flow = nil
     }
 
@@ -228,11 +343,16 @@ final class AppController: ObservableObject {
         persist()
     }
 
-    func beginConnect() { flow = .saveConnection(prefillURL: nil) }
-    func dismissFlow() { creatingShareId = nil; flow = nil }
+    func dismissFlow() { creating = nil; flow = nil }
 
-    /// Save (and connect) a use connection from the sheet. Returns the
-    /// validation error key, or nil on success.
+    // MARK: - Use connections
+
+    func beginConnect() {
+        settingsPages = []
+        sheet = .saveConnection(prefillURL: nil)
+    }
+
+    /// Save (and connect) a use connection from the sheet.
     func saveConnection(url rawURL: String, label rawLabel: String) {
         let url = Self.normalizeURL(rawURL)
         let id = "use-\(Int(Fmt.seed(url)))"
@@ -243,7 +363,7 @@ final class AppController: ObservableObject {
             model.setConnections(shares: model.shares, uses: model.uses + [conn])
         }
         model.selectedId = id
-        flow = nil
+        sheet = nil
         persist()
         toggleUse(id)
     }
@@ -258,6 +378,8 @@ final class AppController: ObservableObject {
         guard let shareURL = Self.canonicalShareURL(from: url), Self.isValidShareURL(shareURL) else { return }
         if let last = lastDeepLink, last.url == shareURL, Date().timeIntervalSince(last.at) < 3 { return }
         lastDeepLink = (shareURL, Date())
+        // The link opens on its connection, not behind the settings
+        settingsPages = []
 
         if let existing = model.uses.first(where: { $0.url == shareURL }) {
             model.selectedId = existing.id
@@ -267,12 +389,12 @@ final class AppController: ObservableObject {
             if let active = model.useActiveId, active != existing.id { tunnel.disconnect() }
             toggleUse(existing.id)
         } else {
-            flow = .saveConnection(prefillURL: shareURL)
+            sheet = .saveConnection(prefillURL: shareURL)
         }
     }
 
     /// Normalize a share link to its canonical `https://spora.to/s/<token>` form
-    /// (preserving the `?r=` relay hint). Returns nil for anything else.
+    /// (preserving the `?r=` relay hints). Returns nil for anything else.
     static func canonicalShareURL(from url: URL) -> String? {
         switch url.scheme {
         case "https":
@@ -280,7 +402,8 @@ final class AppController: ObservableObject {
         case "spora":
             guard url.host == "s" else { return nil }
             var c = URLComponents()
-            c.scheme = "https"; c.host = "spora.to"; c.path = "/s" + url.path; c.query = url.query
+            c.scheme = "https"; c.host = "spora.to"; c.path = "/s" + url.path
+            c.percentEncodedQuery = URLComponents(url: url, resolvingAgainstBaseURL: false)?.percentEncodedQuery
             return c.url?.absoluteString
         default:
             return nil
@@ -315,15 +438,63 @@ final class AppController: ObservableObject {
         return "https://\(t)"
     }
 
+    // MARK: - Navigation
+
+    /// Show a connection's detail (closing the settings).
+    func select(_ id: String) {
+        settingsPages = []
+        model.selectedId = id
+    }
+
+    /// The settings list (the sidebar's SETTINGS, ⌘,).
+    func openSettings() {
+        settingsPages = [.list]
+    }
+
+    /// The Relays page alone, from an error it fixes: back returns there.
+    func openRelaySettings() {
+        settingsPages = [.relays]
+    }
+
+    func pushSettings(_ page: SettingsPage) { settingsPages.append(page) }
+    func popSettings() { _ = settingsPages.popLast() }
+
+    func openFeedback() { sheet = .feedback }
+
+    /// The force notice: the account requires uploads. One owner, so the two
+    /// triggers (the flag arriving, a refused switch-off) never stack.
+    func showTelemetryRequired() {
+        if sheet != .telemetryRequired { sheet = .telemetryRequired }
+    }
+
+    /// The account's flag arrived: the notice is owed once, when no other
+    /// sheet is up.
+    func offerTelemetryNotice() {
+        guard !telemetryNoticeOffered, sheet == nil else { return }
+        telemetryNoticeOffered = true
+        sheet = .telemetryRequired
+    }
+    private var telemetryNoticeOffered = false
+
+    func dismissTelemetryRequired(contactSupport: Bool) {
+        service.acknowledgeNotice()
+        sheet = contactSupport ? .feedback : nil
+    }
+
+    // MARK: - Actions
+
     func copy(_ text: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
     }
 
+    /// The action an error offers: a new link for a share under a lost
+    /// identity, otherwise another try.
     func retry(_ selection: Selection) {
-        switch selection.role {
-        case .share: toggleShare(selection.id)
-        case .use: toggleUse(selection.id)
+        switch (selection.role, model.state(for: selection)) {
+        case (.share, .error(.shareLinkLost)): makeNewLink(selection.id)
+        case (.share, _): toggleShare(selection.id)
+        case (.use, _): toggleUse(selection.id)
         }
     }
 
@@ -331,12 +502,12 @@ final class AppController: ObservableObject {
         guard let sel = model.selection else { return }
         switch sel.role {
         case .share:
-            if let handle = model.activeShares[sel.id]?.handle { try? stopShare(handle: handle) }
+            stopShareSession(sel.id)
             model.removeShare(sel.id)
         case .use:
             model.removeUse(sel.id)
         }
-        persist() // prunes the removed share's identity from the store
+        persist() // deletes the removed share's blob from the Keychain
     }
 
     // MARK: - Helpers

@@ -29,8 +29,9 @@ public final class AppModel: ObservableObject {
     @Published public private(set) var useErrorId: String?
     @Published public private(set) var useConnectedAt: Date?
 
-    // Known share URLs (from a live share, or synthesized when seeded) so the
-    // detail pane can show the link even for an inactive share.
+    // Known share URLs (from the share's blob, a live share, or synthesized
+    // when seeded) so the detail pane can show the link even for an inactive
+    // share.
     @Published public private(set) var shareURLs: [String: String] = [:]
 
     // Sidebar selection (which connection's detail is shown in the window).
@@ -211,10 +212,19 @@ public final class AppModel: ObservableObject {
         selectedId = nil
     }
 
-    /// Record a share's URL without marking it active (used when regenerating a
-    /// URL from a persisted identity at launch, and when seeding).
+    /// Record a share's URL without marking it active (a persisted share's
+    /// URL at launch, read from its blob; seeded shares).
     public func registerShareURL(_ id: String, _ url: String) {
         shareURLs[id] = url
+    }
+
+    /// Give a share a new blob (a new link, same name and place): the old one
+    /// was made under a device identity this Mac no longer has.
+    public func replaceShare(_ id: String, share: Data, url: String) {
+        guard let i = shares.firstIndex(where: { $0.id == id }) else { return }
+        shares[i].share = share
+        shareURLs[id] = url
+        shareErrors[id] = nil
     }
 
     public func rename(shareId: String, to label: String) {

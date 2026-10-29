@@ -15,6 +15,18 @@ enum Fmt {
         return f
     }()
 
+    private static let dateTimeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .short
+        return f
+    }()
+
+    /// A moment the core reports (Unix milliseconds), date and time.
+    static func dateTime(unixMs: UInt64) -> String {
+        dateTimeFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(unixMs) / 1000))
+    }
+
     static func date(_ date: Date) -> String {
         guard date != .distantPast else { return "—" }
         return mediumDate.string(from: date)

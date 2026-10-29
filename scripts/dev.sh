@@ -4,7 +4,12 @@
 #
 # States are driven through the DEBUG-only spora-debug:// URL scheme (same
 # command vocabulary as Android's DebugStateReceiver), so screenshot matrices
-# stay portable. Screenshots self-capture the window into artifacts/.
+# stay portable. Screenshots self-capture the window into artifacts/ (an open
+# sheet lands next to it as <name>-sheet.png).
+#
+# Never contact production from development: `run` pins the core's API to
+# SPORA_API, by default an address that answers nothing (set SPORA_API to a
+# local spora-web to see the reachable relay/telemetry states).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -38,10 +43,10 @@ cmd_run() {
   # Relaunch fresh.
   pkill -x Spora >/dev/null 2>&1 || true
   sleep 0.4
-  SPORA_ARTIFACTS_DIR="$ARTIFACTS" "$BIN" \
+  SPORA_API="${SPORA_API-http://127.0.0.1:9}" SPORA_ARTIFACTS_DIR="$ARTIFACTS" "$BIN" \
     -AppleLanguages "($locale)" -AppleLocale "${locale}_BY" \
     >/dev/null 2>&1 &
-  echo "launched Spora (locale=$locale, pid=$!)"
+  echo "launched Spora (locale=$locale, SPORA_API=${SPORA_API-http://127.0.0.1:9}, pid=$!)"
   sleep 1.2
 }
 

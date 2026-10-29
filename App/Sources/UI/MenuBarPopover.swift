@@ -178,6 +178,7 @@ struct CompactAggregateStatus: View {
 struct PopoverRow: View {
     @EnvironmentObject var model: AppModel
     @EnvironmentObject var controller: AppController
+    @Environment(\.openWindow) private var openWindow
     let id: String
     let name: String
     let state: DisplayState
@@ -223,8 +224,15 @@ struct PopoverRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(L(e.messageKey)).font(SporaFont.sans(11.5)).foregroundStyle(SporaColor.error)
                     .fixedSize(horizontal: false, vertical: true)
-                Button { controller.retry(Selection(id: id, role: role)) } label: {
-                    MicroLabel(L("retry") + " →", color: SporaColor.textPrimary)
+                Button {
+                    // A new link is handed over in the window
+                    if e == .shareLinkLost {
+                        NSApp.activate(ignoringOtherApps: true)
+                        openWindow(id: "main")
+                    }
+                    controller.retry(Selection(id: id, role: role))
+                } label: {
+                    MicroLabel(L(e == .shareLinkLost ? "share_new_link" : "retry") + " →", color: SporaColor.textPrimary)
                 }.buttonStyle(.plain)
             }
         case (_, .waiting):

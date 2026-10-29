@@ -1,29 +1,49 @@
 import Foundation
 import Security
 
-/// Stores a share's secret identity bytes (CLAUDE.md: "Identity bytes are
-/// secrets → Keychain"). Each share has its own identity keyed by connection id.
+/// Stores secret bytes (AGENTS.md: "Identity bytes are secrets → Keychain"):
+/// each share's blob (its secret and relay credentials), the key the core's
+/// service seals its state with, the relay settings (own relays' tokens).
+/// One `service` per kind of secret, one account per item.
 ///
 /// Primary backend is the Keychain (generic password, this app's access).
-/// Because the current build is **ad-hoc unsigned** (project.yml `CODE_SIGN_IDENTITY
-/// "-"`), a Keychain access-control prompt could block a headless run — so
-/// operations pass `kSecUseAuthenticationUI: fail` (a would-be prompt becomes an
-/// error) and fall back to a 0600 file under Application Support. Once the app is
-/// dev-signed with a keychain-access-group, the Keychain path succeeds silently
-/// and the file fallback is never used.
-public struct IdentityStore {
-    private let service = "to.spora.mac.identity"
+/// An ad-hoc signed build could meet a Keychain access-control prompt that
+/// blocks a headless run, so operations pass `kSecUseAuthenticationUI: fail`
+/// (a would-be prompt becomes an error) and fall back to a 0600 file under
+/// Application Support. Team-signed builds take the
+/// Keychain path silently and never use the fallback.
+public struct SecretStore {
+    private let service: String
     private let fileDir: URL
 
-    public init() {
+    /// - Parameters:
+    ///   - service: the Keychain service, e.g. `to.spora.mac.share`.
+    ///   - fileDirName: the fallback directory under Application Support/Spora.
+    public init(service: String, fileDirName: String) {
+        self.service = service
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? URL(fileURLWithPath: NSTemporaryDirectory())
-        fileDir = base.appendingPathComponent("Spora/identities", isDirectory: true)
+        fileDir = base.appendingPathComponent("Spora/\(fileDirName)", isDirectory: true)
     }
 
-    public func save(_ data: Data, for id: String) {
-        if keychainSave(data, account: id) { return }
-        fileSave(data, for: id)
+    /// Shares' blobs, by connection id.
+    public static let shares = SecretStore(service: "to.spora.mac.share", fileDirName: "shares")
+    /// Before shares were the core's: a per-share identity, by connection id.
+    /// Only read to delete what an older version left.
+    static let legacyIdentities = SecretStore(service: "to.spora.mac.identity", fileDirName: "identities")
+    /// The key the core's service seals `service.json`'s secrets with.
+    public static let serviceKey = SecretStore(service: "to.spora.mac.service-key", fileDirName: "service-key")
+    /// The relay settings (own relays' tokens are secrets).
+    public static let relaySettings = SecretStore(service: "to.spora.mac.relay-settings", fileDirName: "relay-settings")
+
+    /// Whether the bytes are stored (Keychain, else the 0600 file).
+    @discardableResult
+    public func save(_ data: Data, for id: String) -> Bool {
+        if keychainSave(data, account: id) {
+            try? FileManager.default.removeItem(at: fileURL(id))
+            return true
+        }
+        return fileSave(data, for: id)
     }
 
     public func load(_ id: String) -> Data? {
@@ -74,12 +94,13 @@ public struct IdentityStore {
         fileDir.appendingPathComponent("\(id).bin")
     }
 
-    private func fileSave(_ data: Data, for id: String) {
+    private func fileSave(_ data: Data, for id: String) -> Bool {
         try? FileManager.default.createDirectory(at: fileDir, withIntermediateDirectories: true,
                                                  attributes: [.posixPermissions: 0o700])
         let url = fileURL(id)
-        try? data.write(to: url, options: .atomic)
+        guard (try? data.write(to: url, options: .atomic)) != nil else { return false }
         try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+        return true
     }
 
     private func fileLoad(_ id: String) -> Data? {

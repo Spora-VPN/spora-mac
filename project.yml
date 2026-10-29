@@ -15,6 +15,10 @@ settings:
     # appex can run. Automatic signing + `-allowProvisioningUpdates` mints the
     # to.spora.mac / to.spora.mac.tunnel App IDs and profiles.
     CODE_SIGN_STYLE: Automatic
+    # The app group the app and the tunnel extension share (connection
+    # records and the diagnostic log live in its container; see SporaPaths).
+    # macOS team-prefixed form: no portal registration needed.
+    SPORA_APP_GROUP: $(DEVELOPMENT_TEAM).to.spora.mac
 
 targets:
   SporaDesign:
@@ -50,6 +54,21 @@ targets:
     dependencies:
       - sdk: Security.framework
       - sdk: SystemConfiguration.framework
+      - sdk: Network.framework
+
+  SporaKitTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Packages/SporaKit/Tests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaKitTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        # SporaKit's interface imports the UniFFI C module
+        SWIFT_INCLUDE_PATHS: $(SRCROOT)/rust-out/include
+    dependencies:
+      - target: SporaKit
 
   Spora:
     type: application
@@ -117,5 +136,10 @@ schemes:
     build:
       targets:
         Spora: all
+        SporaKitTests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - SporaKitTests

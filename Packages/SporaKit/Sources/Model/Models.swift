@@ -7,21 +7,31 @@ public enum Role: Sendable, Equatable {
     case use    // ↓ receive: you use a friend's internet
 }
 
-/// A share this device offers. The share URL is **not persisted** — it is
-/// regenerated each launch from the stable `identity` via `share()`, so the
-/// link a friend holds stays valid across restarts. `identity` bytes are a
-/// secret and belong in the Keychain (see persistence layer).
+/// A share this device offers. `share` is the core's share blob (made by
+/// `makeShare` under the device identity the core's service keeps): it holds
+/// the share's secret and its relays, and its URL is a pure function of it
+/// (`shareUrl`), so the link a friend holds stays valid across restarts and
+/// other relays mean a new share. The blob is a secret and lives in the
+/// Keychain (see `ConnectionStore`); the URL is never persisted.
 public struct ShareConnection: Identifiable, Equatable, Sendable {
     public let id: String
     public var label: String
-    public var identity: Data
+    public var share: Data
     public var createdAt: Date
 
-    public init(id: String, label: String, identity: Data, createdAt: Date = .distantPast) {
+    public init(id: String, label: String, share: Data, createdAt: Date = .distantPast) {
         self.id = id
         self.label = label
-        self.identity = identity
+        self.share = share
         self.createdAt = createdAt
+    }
+
+    /// The share's link; nil for a blob this build cannot read.
+    public var url: String? { try? shareUrl(shareBlob: share) }
+
+    /// Whether the share presents the device's relay token (Spora's relays).
+    public var usesSporaRelays: Bool {
+        ((try? shareRelays(shareBlob: share)) ?? []).contains { $0.credential == .spora }
     }
 }
 

@@ -1840,6 +1840,2214 @@
           }
         }
       }
+    },
+    "settings_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SETTINGS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАСТРОЙКИ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАЛАДЫ"
+          }
+        }
+      }
+    },
+    "settings_relays_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relays"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ретрансляторы"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рэтранслятары"
+          }
+        }
+      }
+    },
+    "settings_relays_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RELAYS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "РЕТРАНСЛЯТОРЫ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "РЭТРАНСЛЯТАРЫ"
+          }
+        }
+      }
+    },
+    "settings_telemetry_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telemetry"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Телеметрия"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тэлеметрыя"
+          }
+        }
+      }
+    },
+    "settings_telemetry_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TELEMETRY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТЕЛЕМЕТРИЯ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТЭЛЕМЕТРЫЯ"
+          }
+        }
+      }
+    },
+    "settings_relays_summary_spora": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora's relays"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ретрансляторы Spora"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рэтранслятары Spora"
+          }
+        }
+      }
+    },
+    "settings_relays_summary_spora_own": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora's and your own (%lld)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora и ваши (%lld)"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora і вашы (%lld)"
+          }
+        }
+      }
+    },
+    "settings_relays_summary_own": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only your own (%lld)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Только ваши (%lld)"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Толькі вашы (%lld)"
+          }
+        }
+      }
+    },
+    "settings_relays_summary_none": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None: new links can't be made"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет: новые ссылки создать нельзя"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Няма: новыя спасылкі стварыць нельга"
+          }
+        }
+      }
+    },
+    "settings_telemetry_on": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включена"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Уключана"
+          }
+        }
+      }
+    },
+    "settings_telemetry_off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выключена"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выключана"
+          }
+        }
+      }
+    },
+    "settings_telemetry_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available right now"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сейчас недоступна"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зараз недаступная"
+          }
+        }
+      }
+    },
+    "settings_spora_toggle_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use Spora's relays"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Использовать ретрансляторы Spora"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выкарыстоўваць рэтранслятары Spora"
+          }
+        }
+      }
+    },
+    "settings_spora_status_ready": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово к работе."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гатова да працы."
+          }
+        }
+      }
+    },
+    "settings_spora_status_checking": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверяем…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Правяраем…"
+          }
+        }
+      }
+    },
+    "settings_spora_status_unreachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't reach Spora. Spora will keep trying."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось связаться со Spora. Spora будет пробовать снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не ўдалося звязацца са Spora. Spora будзе спрабаваць зноў."
+          }
+        }
+      }
+    },
+    "settings_spora_status_not_available": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora's relays aren't available to this device right now."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ретрансляторы Spora сейчас недоступны для этого устройства."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рэтранслятары Spora зараз недаступныя для гэтай прылады."
+          }
+        }
+      }
+    },
+    "settings_spora_status_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora's relays aren't available right now. Spora will try again when you next open it."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ретрансляторы Spora сейчас недоступны. Spora попробует снова, когда вы в следующий раз откроете приложение."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рэтранслятары Spora зараз недаступныя. Spora паспрабуе зноў, калі вы наступным разам адкрыеце праграму."
+          }
+        }
+      }
+    },
+    "settings_own_relays_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR OWN RELAYS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВАШИ РЕТРАНСЛЯТОРЫ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВАШЫ РЭТРАНСЛЯТАРЫ"
+          }
+        }
+      }
+    },
+    "settings_own_relays_intro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relays you run yourself, or someone you trust runs. They work alongside Spora's, or on their own."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ретрансляторы, которые держите вы сами или тот, кому вы доверяете. Работают вместе с ретрансляторами Spora или без них."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рэтранслятары, якія трымаеце вы самі або той, каму вы давяраеце. Працуюць разам з рэтранслятарамі Spora або без іх."
+          }
+        }
+      }
+    },
+    "settings_relay_token_set": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOKEN SET"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТОКЕН ЗАДАН"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТОКЕН ЗАДАДЗЕНЫ"
+          }
+        }
+      }
+    },
+    "settings_relay_no_token": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NO TOKEN"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "БЕЗ ТОКЕНА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "БЕЗ ТОКЕНА"
+          }
+        }
+      }
+    },
+    "settings_relay_add": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ADD A RELAY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДОБАВИТЬ РЕТРАНСЛЯТОР"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДАДАЦЬ РЭТРАНСЛЯТАР"
+          }
+        }
+      }
+    },
+    "settings_relay_edit_action": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменить"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Змяніць"
+          }
+        }
+      }
+    },
+    "settings_relay_remove_content_desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove relay"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить ретранслятор"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выдаліць рэтранслятар"
+          }
+        }
+      }
+    },
+    "settings_no_relays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With no relays, new links can't be made."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без ретрансляторов новые ссылки создать нельзя."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без рэтранслятараў новыя спасылкі стварыць нельга."
+          }
+        }
+      }
+    },
+    "settings_relays_note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relays are part of each link. These settings apply to the links you make from now on; links you already have keep their relays."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ретрансляторы входят в каждую ссылку. Эти настройки действуют для ссылок, которые вы создадите дальше, а у прежних ссылок ретрансляторы не меняются."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рэтранслятары ўваходзяць у кожную спасылку. Гэтыя налады дзейнічаюць для спасылак, якія вы створыце далей, а ў ранейшых спасылак рэтранслятары не мяняюцца."
+          }
+        }
+      }
+    },
+    "settings_relay_add_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ADD A RELAY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВЫЙ РЕТРАНСЛЯТОР"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВЫ РЭТРАНСЛЯТАР"
+          }
+        }
+      }
+    },
+    "settings_relay_edit_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EDIT RELAY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ИЗМЕНЕНИЕ РЕТРАНСЛЯТОРА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗМЕНА РЭТРАНСЛЯТАРА"
+          }
+        }
+      }
+    },
+    "settings_relay_modal_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your relay"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш ретранслятор"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш рэтранслятар"
+          }
+        }
+      }
+    },
+    "settings_relay_address_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RELAY ADDRESS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДРЕС РЕТРАНСЛЯТОРА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДРАС РЭТРАНСЛЯТАРА"
+          }
+        }
+      }
+    },
+    "settings_relay_address_helper": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "host:port. For a relay on another protocol, put nz/ or tcptls/ in front."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "хост:порт. Для ретранслятора на другом протоколе добавьте в начало nz/ или tcptls/."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "хост:порт. Для рэтранслятара на іншым пратаколе дадайце ў пачатак nz/ або tcptls/."
+          }
+        }
+      }
+    },
+    "settings_relay_token_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOKEN — OPTIONAL"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТОКЕН — НЕОБЯЗАТЕЛЬНО"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТОКЕН — НЕАБАВЯЗКОВА"
+          }
+        }
+      }
+    },
+    "settings_relay_token_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If the relay requires one"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Если ретранслятор его требует"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Калі рэтранслятар яго патрабуе"
+          }
+        }
+      }
+    },
+    "settings_relay_token_helper": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It is sent to the relay and never goes into your links."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Он отправляется ретранслятору и никогда не попадает в ваши ссылки."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ён адпраўляецца рэтранслятару і ніколі не трапляе ў вашы спасылкі."
+          }
+        }
+      }
+    },
+    "settings_relay_error_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter it as host:port, for example relay.example.org:443."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введите адрес в виде хост:порт, например relay.example.org:443."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увядзіце адрас у выглядзе хост:порт, напрыклад relay.example.org:443."
+          }
+        }
+      }
+    },
+    "settings_relay_error_protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown protocol. Use nz/ or tcptls/, or nothing for the default."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неизвестный протокол. Укажите nz/ или tcptls/ либо ничего — для протокола по умолчанию."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Невядомы пратакол. Укажыце nz/ або tcptls/ ці нічога — для пратакола па змаўчанні."
+          }
+        }
+      }
+    },
+    "settings_relay_error_ipv6": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Put an IPv6 address in brackets: [2001:db8::1]:443."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv6-адрес нужно взять в квадратные скобки: [2001:db8::1]:443."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPv6-адрас трэба ўзяць у квадратныя дужкі: [2001:db8::1]:443."
+          }
+        }
+      }
+    },
+    "settings_relay_error_port": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The port must be a number from 1 to 65535."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Порт должен быть числом от 1 до 65535."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Порт павінен быць лікам ад 1 да 65535."
+          }
+        }
+      }
+    },
+    "settings_relay_error_duplicate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This relay is already on the list."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Этот ретранслятор уже есть в списке."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гэты рэтранслятар ужо ёсць у спісе."
+          }
+        }
+      }
+    },
+    "settings_relay_remove_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REMOVE RELAY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "УДАЛЕНИЕ РЕТРАНСЛЯТОРА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВЫДАЛЕННЕ РЭТРАНСЛЯТАРА"
+          }
+        }
+      }
+    },
+    "settings_relay_remove_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Links you have already made keep using it. New links won't."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Уже созданные ссылки продолжат им пользоваться, новые — нет."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ужо створаныя спасылкі будуць і далей яго выкарыстоўваць, новыя — не."
+          }
+        }
+      }
+    },
+    "action_save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SAVE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СОХРАНИТЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗАХАВАЦЬ"
+          }
+        }
+      }
+    },
+    "action_delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DELETE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "УДАЛИТЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВЫДАЛІЦЬ"
+          }
+        }
+      }
+    },
+    "delete_modal_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы уверены?"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы ўпэўнены?"
+          }
+        }
+      }
+    },
+    "action_open_settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPEN SETTINGS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОТКРЫТЬ НАСТРОЙКИ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДКРЫЦЬ НАЛАДЫ"
+          }
+        }
+      }
+    },
+    "share_new_link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MAKE A NEW LINK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СОЗДАТЬ НОВУЮ ССЫЛКУ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СТВАРЫЦЬ НОВУЮ СПАСЫЛКУ"
+          }
+        }
+      }
+    },
+    "diagnostics_modal_why": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They show us where and how networks block Spora, and help us fix problems."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По ним мы видим, где и как сети блокируют Spora, и исправляем проблемы."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Па іх мы бачым, дзе і як сеткі блакуюць Spora, і выпраўляем праблемы."
+          }
+        }
+      }
+    },
+    "diagnostics_modal_off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With telemetry off, nothing is uploaded. Once it has been on, Spora still checks with us about once a day whether your account requires it, and if it does, turns it back on and tells you. Feedback comes with a report, and it goes out only when you send it."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Когда телеметрия выключена, ничего не отправляется. Но если она хоть раз была включена, Spora примерно раз в день уточняет у нас, не требует ли её ваш аккаунт, и если требует — включает её снова и сообщает вам об этом. Отчёт прилагается к отзыву и уходит, только когда вы сами его отправите."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Калі тэлеметрыя выключана, нічога не адпраўляецца. Але калі яна хоць раз была ўключана, Spora прыкладна раз на дзень пытаецца ў нас, ці не патрабуе яе ваш акаўнт, і калі патрабуе — уключае яе зноў і паведамляе вам пра гэта. Справаздача дадаецца да водгуку і адпраўляецца, толькі калі вы самі яе адправіце."
+          }
+        }
+      }
+    },
+    "diagnostics_toggle_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send telemetry automatically"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправлять телеметрию автоматически"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адпраўляць тэлеметрыю аўтаматычна"
+          }
+        }
+      }
+    },
+    "diagnostics_upload_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The last upload didn't go through. Spora will try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последняя отправка не прошла. Spora попробует ещё раз."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Апошняя адпраўка не прайшла. Spora паспрабуе яшчэ раз."
+          }
+        }
+      }
+    },
+    "diagnostics_switch_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't change the setting. Try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось изменить настройку. Попробуйте ещё раз."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не ўдалося змяніць наладу. Паспрабуйце яшчэ раз."
+          }
+        }
+      }
+    },
+    "diagnostics_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telemetry isn't available right now. Spora will try again when you next open it; feedback with a report still works."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Телеметрия сейчас недоступна. Spora попробует снова, когда вы в следующий раз откроете приложение; отзыв с отчётом можно отправить и так."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тэлеметрыя зараз недаступная. Spora паспрабуе зноў, калі вы наступным разам адкрыеце праграму; водгук са справаздачай можна даслаць і так."
+          }
+        }
+      }
+    },
+    "diagnostics_device_id_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DEVICE ID"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID УСТРОЙСТВА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID ПРЫЛАДЫ"
+          }
+        }
+      }
+    },
+    "diagnostics_device_id_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mention it when you contact support."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сообщите его при обращении в поддержку."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Паведаміце яго, калі звяртаецеся ў падтрымку."
+          }
+        }
+      }
+    },
+    "diagnostics_last_upload_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LAST UPLOAD"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОСЛЕДНЯЯ ОТПРАВКА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АПОШНЯЯ АДПРАЎКА"
+          }
+        }
+      }
+    },
+    "diagnostics_last_upload_never": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ещё не было"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Яшчэ не было"
+          }
+        }
+      }
+    },
+    "telemetry_required_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TELEMETRY REQUIRED"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТЕЛЕМЕТРИЯ ОБЯЗАТЕЛЬНА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТЭЛЕМЕТРЫЯ АБАВЯЗКОВАЯ"
+          }
+        }
+      }
+    },
+    "telemetry_required_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telemetry stays on"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Телеметрия остаётся включённой"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тэлеметрыя застаецца ўключанай"
+          }
+        }
+      }
+    },
+    "telemetry_required_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your account requires that telemetry is enabled (most likely because you've signed up to a promotion). You can keep it enabled, sign in to a different account, or contact support."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для вашего аккаунта телеметрия обязательна (скорее всего, потому что вы участвуете в акции). Вы можете оставить её включённой, войти в другой аккаунт или обратиться в поддержку."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для вашага акаўнта тэлеметрыя абавязковая (хутчэй за ўсё, таму што вы ўдзельнічаеце ў акцыі). Вы можаце пакінуць яе ўключанай, увайсці ў іншы акаўнт або звярнуцца ў падтрымку."
+          }
+        }
+      }
+    },
+    "telemetry_required_keep": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KEEP ENABLED"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОСТАВИТЬ ВКЛЮЧЁННОЙ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАКІНУЦЬ УКЛЮЧАНАЙ"
+          }
+        }
+      }
+    },
+    "telemetry_required_contact": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CONTACT SUPPORT"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАПИСАТЬ В ПОДДЕРЖКУ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАПІСАЦЬ У ПАДТРЫМКУ"
+          }
+        }
+      }
+    },
+    "feedback_modal_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEND FEEDBACK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОТПРАВИТЬ ОТЗЫВ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДАСЛАЦЬ ВОДГУК"
+          }
+        }
+      }
+    },
+    "feedback_modal_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help us improve"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Помогите нам стать лучше"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дапамажыце нам стаць лепшымі"
+          }
+        }
+      }
+    },
+    "feedback_modal_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tell us what went wrong or what could be better."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Расскажите, что пошло не так или что можно улучшить."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раскажыце, што пайшло не так або што можна палепшыць."
+          }
+        }
+      }
+    },
+    "feedback_modal_report_note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A diagnostic report goes with it: connection records, the app log and crash reports from the last few days. You send it yourself, from an app of your choice."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "К отзыву прилагается диагностический отчёт: записи о подключениях, журнал приложения и отчёты о сбоях за последние дни. Отправляете его вы сами — через приложение на ваш выбор."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Да водгуку дадаецца дыягнастычная справаздача: запісы пра падключэнні, журнал праграмы і звесткі пра збоі за апошнія дні. Адпраўляеце яе вы самі — праз праграму на ваш выбар."
+          }
+        }
+      }
+    },
+    "feedback_subject_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SUBJECT"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТЕМА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ТЭМА"
+          }
+        }
+      }
+    },
+    "feedback_subject_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection keeps dropping"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропадает подключение"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знікае падключэнне"
+          }
+        }
+      }
+    },
+    "feedback_message_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MESSAGE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "СООБЩЕНИЕ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАВЕДАМЛЕННЕ"
+          }
+        }
+      }
+    },
+    "feedback_message_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What happened?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Что случилось?"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Што здарылася?"
+          }
+        }
+      }
+    },
+    "feedback_send": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEND"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОТПРАВИТЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ДАСЛАЦЬ"
+          }
+        }
+      }
+    },
+    "feedback_preparing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREPARING…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ГОТОВИМ…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "РЫХТУЕМ…"
+          }
+        }
+      }
+    },
+    "feedback_handoff_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Almost done"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Почти готово"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Амаль гатова"
+          }
+        }
+      }
+    },
+    "feedback_handoff_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish sending in the app you picked: nothing reaches us until you do. If that app asks for an address, use the one below."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершите отправку в выбранном приложении: пока вы этого не сделаете, к нам ничего не придёт. Если приложение спросит адрес — он ниже."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завяршыце адпраўку ў выбранай праграме: пакуль вы гэтага не зробіце, да нас нічога не дойдзе. Калі праграма спытае адрас — ён ніжэй."
+          }
+        }
+      }
+    },
+    "feedback_no_report": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The diagnostic report couldn't be attached, so your message goes without it."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось приложить диагностический отчёт — сообщение уйдёт без него."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не ўдалося прыкласці дыягнастычную справаздачу — паведамленне пойдзе без яе."
+          }
+        }
+      }
+    },
+    "feedback_support_address_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SUPPORT ADDRESS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДРЕС ПОДДЕРЖКИ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДРАС ПАДТРЫМКІ"
+          }
+        }
+      }
+    },
+    "feedback_send_again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CHOOSE AN APP AGAIN"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВЫБРАТЬ ПРИЛОЖЕНИЕ ЕЩЁ РАЗ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВЫБРАЦЬ ПРАГРАМУ ЯШЧЭ РАЗ"
+          }
+        }
+      }
+    },
+    "error_share_unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing isn't available right now. Restart the app and try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздача сейчас недоступна. Перезапустите приложение и попробуйте ещё раз."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздача зараз недаступная. Перазапусціце праграму і паспрабуйце яшчэ раз."
+          }
+        }
+      }
+    },
+    "error_no_relays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no relays to make a link with. Turn on Spora's relays or add your own in settings."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет ретрансляторов для новой ссылки. Включите ретрансляторы Spora или добавьте свои в настройках."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Няма рэтранслятараў для новай спасылкі. Уключыце рэтранслятары Spora або дадайце свае ў наладах."
+          }
+        }
+      }
+    },
+    "error_relays_unreachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't get relays from Spora. Check your internet connection and try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось получить ретрансляторы от Spora. Проверьте интернет-соединение и попробуйте ещё раз."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не ўдалося атрымаць рэтранслятары ад Spora. Праверце інтэрнэт-злучэнне і паспрабуйце яшчэ раз."
+          }
+        }
+      }
+    },
+    "error_no_spora_relays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora has no relays for you right now. Try again later, or add your own in settings."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У Spora сейчас нет для вас ретрансляторов. Попробуйте позже или добавьте свои в настройках."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У Spora зараз няма для вас рэтранслятараў. Паспрабуйце пазней або дадайце свае ў наладах."
+          }
+        }
+      }
+    },
+    "settings_title_page": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налады"
+          }
+        }
+      }
+    },
+    "settings_back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Назад"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Назад"
+          }
+        }
+      }
+    },
+    "sidebar_settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SETTINGS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАСТРОЙКИ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НАЛАДЫ"
+          }
+        }
+      }
+    },
+    "sidebar_feedback": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FEEDBACK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОБРАТНАЯ СВЯЗЬ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ЗВАРОТНАЯ СУВЯЗЬ"
+          }
+        }
+      }
+    },
+    "menu_settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налады…"
+          }
+        }
+      }
+    },
+    "menu_feedback": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Feedback…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправить отзыв…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Даслаць водгук…"
+          }
+        }
+      }
+    },
+    "settings_relay_address_placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "relay.example.org:443"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "relay.example.org:443"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "relay.example.org:443"
+          }
+        }
+      }
+    },
+    "settings_relays_intro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every link needs at least one relay: it is how the people you share with first reach your Mac. Once they are connected, Spora tries to switch to a direct path."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каждой ссылке нужен хотя бы один ретранслятор: через него те, с кем вы делитесь, впервые находят ваш Mac. После подключения Spora пробует перейти на прямое соединение."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кожнай спасылцы патрэбны хаця б адзін рэтранслятар: праз яго тыя, з кім вы дзеліцеся, упершыню знаходзяць ваш Mac. Пасля падключэння Spora спрабуе перайсці на прамое злучэнне."
+          }
+        }
+      }
+    },
+    "settings_spora_toggle_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora runs them for free. What passes through them stays encrypted end to end; they see the addresses involved and how much data moves. To use them, this Mac registers with Spora."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora предоставляет их бесплатно. Всё, что через них проходит, защищено сквозным шифрованием; они видят адреса участников и объём передаваемых данных. Чтобы ими пользоваться, этот Mac регистрируется в Spora."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora дае іх бясплатна. Усё, што праз іх праходзіць, абаронена скразным шыфраваннем; яны бачаць адрасы ўдзельнікаў і аб'ём перададзеных даных. Каб імі карыстацца, гэты Mac рэгіструецца ў Spora."
+          }
+        }
+      }
+    },
+    "diagnostics_modal_what": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora keeps a record of each connection, an app log and crash reports on this Mac. With telemetry on, they are sent to us automatically, over whatever network you are on. They contain network addresses: yours as the internet sees it, and those of the devices and servers Spora connects with. We also see the address each upload comes from."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora хранит на этом Mac записи о каждом подключении, журнал приложения и отчёты о сбоях. Если включить телеметрию, они будут автоматически отправляться нам через любую сеть, к которой вы подключены. В них есть сетевые адреса: ваш адрес, каким его видит интернет, и адреса устройств и серверов, с которыми соединяется Spora. Кроме того, мы видим адрес, с которого приходит каждая отправка."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora захоўвае на гэтым Mac запісы пра кожнае падключэнне, журнал праграмы і звесткі пра збоі. Калі ўключыць тэлеметрыю, яны будуць аўтаматычна адпраўляцца нам праз любую сетку, да якой вы падключаныя. У іх ёсць сеткавыя адрасы: ваш адрас, якім яго бачыць інтэрнэт, і адрасы прылад і сервераў, з якімі злучаецца Spora. Акрамя таго, мы бачым адрас, з якога прыходзіць кожная адпраўка."
+          }
+        }
+      }
+    },
+    "error_share_link_lost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This link no longer works: Spora's data on this Mac was reset. Make a new link and send it again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Эта ссылка больше не работает: данные Spora на этом Mac были сброшены. Создайте новую ссылку и отправьте её снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Гэтая спасылка больш не працуе: даныя Spora на гэтым Mac былі скінутыя. Стварыце новую спасылку і адпраўце яе зноў."
+          }
+        }
+      }
+    },
+    "feedback_show_report": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHOW THE REPORT IN FINDER"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПОКАЗАТЬ ОТЧЁТ В FINDER"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ПАКАЗАЦЬ СПРАВАЗДАЧУ Ў FINDER"
+          }
+        }
+      }
+    },
+    "new_link_busy_eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW LINK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ ССЫЛКА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ СПАСЫЛКА"
+          }
+        }
+      }
+    },
+    "new_link_eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW LINK — READY"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ ССЫЛКА — ГОТОВА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НОВАЯ СПАСЫЛКА — ГАТОВАЯ"
+          }
+        }
+      }
+    },
+    "make_failed_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The link wasn't made"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ссылка не создана"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спасылка не створаная"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
