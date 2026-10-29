@@ -165,10 +165,13 @@ enum DebugController {
             NSBezierPath(roundedRect: card, xRadius: side * 0.2237, yRadius: side * 0.2237).addClip()
             bg.setFill(); card.fill()
             if let mark {
-                let mh = side * 0.56
-                let mw = mh * (mark.size.width / max(mark.size.height, 1))
+                // The mark itself (not its SVG canvas, which has empty space
+                // below it), centered on the card
+                let source = mark.drawnBounds() ?? NSRect(origin: .zero, size: mark.size)
+                let mh = side * 0.64
+                let mw = mh * (source.width / max(source.height, 1))
                 mark.draw(in: NSRect(x: (s - mw) / 2, y: (s - mh) / 2, width: mw, height: mh),
-                          from: .zero, operation: .sourceOver, fraction: 1)
+                          from: source, operation: .sourceOver, fraction: 1)
             }
             NSGraphicsContext.restoreGraphicsState()
             if let png = rep.representation(using: .png, properties: [:]) {
@@ -182,7 +185,7 @@ enum DebugController {
     /// icon can be inspected without capturing the system menu bar.
     private static func iconPreview() {
         let states: [(String, MenuBarState)] = [("offline", .offline), ("active", .active), ("pending", .pending), ("error", .error)]
-        let scale: CGFloat = 6, cellW: CGFloat = 200, cellH: CGFloat = 70
+        let scale: CGFloat = 6, cellW: CGFloat = 220, cellH: CGFloat = 130
         let w = cellW * CGFloat(states.count)
         let img = NSImage(size: NSSize(width: w, height: cellH))
         img.lockFocus()
@@ -198,7 +201,35 @@ enum DebugController {
               let png = rep.representation(using: .png, properties: [:]) else { return }
         try? FileManager.default.createDirectory(at: artifactsDir, withIntermediateDirectories: true)
         try? png.write(to: artifactsDir.appendingPathComponent("icon-preview.png"))
+        menuBarPreview(states.map(\.1))
         SporaLog.d("DebugController", "icon-preview written (states: \(states.map(\.0)))")
+    }
+
+    /// The states at their real size (2x pixels) on a 24pt menu-bar strip,
+    /// beside clock text in the menu bar's font, to judge the icon's size
+    /// without capturing the system menu bar.
+    private static func menuBarPreview(_ states: [MenuBarState]) {
+        let w: CGFloat = 330, h: CGFloat = 24
+        guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(w * 2), pixelsHigh: Int(h * 2),
+                                         bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                                         colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else { return }
+        rep.size = NSSize(width: w, height: h)
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+        NSColor(white: 0.93, alpha: 1).setFill(); NSRect(x: 0, y: 0, width: w, height: h).fill()
+        var x: CGFloat = 12
+        for state in states {
+            let icon = MenuBarLabel.icon(for: state)
+            icon.isTemplate = false
+            icon.draw(in: NSRect(x: x, y: (h - icon.size.height) / 2, width: icon.size.width, height: icon.size.height))
+            x += icon.size.width + 22
+        }
+        let clock = NSAttributedString(string: "Wed 29 Oct  16:54", attributes: [
+            .font: NSFont.menuBarFont(ofSize: 0), .foregroundColor: NSColor.black])
+        clock.draw(at: NSPoint(x: x + 6, y: (h - clock.size().height) / 2))
+        NSGraphicsContext.restoreGraphicsState()
+        try? rep.representation(using: .png, properties: [:])?
+            .write(to: artifactsDir.appendingPathComponent("menubar-preview.png"))
     }
 
     private static func queryItems(_ url: URL) -> [String: String] {

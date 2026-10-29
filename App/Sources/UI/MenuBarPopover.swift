@@ -17,35 +17,45 @@ struct MenuBarLabel: View {
         Image(nsImage: MenuBarLabel.icon(for: state))
     }
 
-    /// Height of the menu-bar icon in points (fits the ~22pt system menu bar).
-    private static let iconHeight: CGFloat = 16
+    /// Height of the menu-bar icon in points: centered in the 24pt menu bar.
+    private static let iconHeight: CGFloat = 18
+    /// The mark's visible height: about what other apps' status items use.
+    private static let markHeight: CGFloat = 16
+    /// The status shape beside the mark (● ○ ◆).
+    private static let glyphSize: CGFloat = 8
+
+    /// Where the mark is drawn in the logo's image (its SVG carries empty
+    /// space below the mark).
+    private static let markSource: NSRect? = NSImage(named: "LogoMonoInk")?.drawnBounds()
 
     static func icon(for state: MenuBarState) -> NSImage {
         let h = iconHeight
-        let markH = h - 3
         let mark = NSImage(named: "LogoMonoInk")
-        let aspect = mark.map { $0.size.width / max($0.size.height, 1) } ?? 0.72
-        let markW = (markH * aspect).rounded()
+        let source = markSource ?? NSRect(origin: .zero, size: mark?.size ?? NSSize(width: 72, height: 100))
+        let markW = (markHeight * source.width / max(source.height, 1)).rounded()
         let gap: CGFloat = 3
-        let glyphSize: CGFloat = state == .offline ? 0 : 7
-        let width = markW + (glyphSize > 0 ? gap + glyphSize : 0)
+        let g: CGFloat = state == .offline ? 0 : glyphSize
+        let width = markW + (g > 0 ? gap + g : 0)
 
         let image = NSImage(size: NSSize(width: width, height: h))
         image.lockFocus()
-        mark?.draw(in: NSRect(x: 0, y: (h - markH) / 2, width: markW, height: markH))
+        mark?.draw(in: NSRect(x: 0, y: (h - markHeight) / 2, width: markW, height: markHeight),
+                   from: source, operation: .sourceOver, fraction: 1)
 
-        if glyphSize > 0 {
+        if g > 0 {
             NSColor.black.setFill(); NSColor.black.setStroke()
             let gx = markW + gap
             let cy = h / 2
             switch state {
             case .active:
-                NSBezierPath(ovalIn: NSRect(x: gx, y: cy - 3, width: 6, height: 6)).fill()
+                NSBezierPath(ovalIn: NSRect(x: gx, y: cy - g / 2, width: g, height: g)).fill()
             case .pending:
-                let ring = NSBezierPath(ovalIn: NSRect(x: gx + 0.75, y: cy - 3.25, width: 6.5, height: 6.5))
-                ring.lineWidth = 1.5; ring.stroke()
+                let line: CGFloat = 1.6
+                let ring = NSBezierPath(ovalIn: NSRect(x: gx + line / 2, y: cy - g / 2 + line / 2,
+                                                       width: g - line, height: g - line))
+                ring.lineWidth = line; ring.stroke()
             case .error:
-                let r: CGFloat = 3.5, cx = gx + 3.5
+                let r = g / 2, cx = gx + r
                 let d = NSBezierPath()
                 d.move(to: NSPoint(x: cx, y: cy + r))
                 d.line(to: NSPoint(x: cx + r, y: cy))
@@ -59,6 +69,36 @@ struct MenuBarLabel: View {
         image.unlockFocus()
         image.isTemplate = true
         return image
+    }
+}
+
+extension NSImage {
+    /// The part of the image anything is drawn in (its alpha bounds), in the
+    /// image's own coordinates, for fitting the drawing itself to a box
+    /// rather than its canvas. Nil for an empty image.
+    func drawnBounds() -> NSRect? {
+        let scale: CGFloat = 4
+        let w = Int((size.width * scale).rounded(.up)), h = Int((size.height * scale).rounded(.up))
+        guard w > 0, h > 0,
+              let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h,
+                                         bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                                         colorSpaceName: .deviceRGB, bytesPerRow: w * 4, bitsPerPixel: 32),
+              let data = rep.bitmapData else { return nil }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+        draw(in: NSRect(x: 0, y: 0, width: w, height: h))
+        NSGraphicsContext.restoreGraphicsState()
+        var minX = w, maxX = -1, minRow = h, maxRow = -1
+        for row in 0..<h {
+            for x in 0..<w where data[row * w * 4 + x * 4 + 3] > 4 {
+                minX = min(minX, x); maxX = max(maxX, x)
+                minRow = min(minRow, row); maxRow = max(maxRow, row)
+            }
+        }
+        guard maxX >= 0 else { return nil }
+        // Bitmap rows run top-down; the image's coordinates bottom-up
+        return NSRect(x: CGFloat(minX) / scale, y: CGFloat(h - 1 - maxRow) / scale,
+                      width: CGFloat(maxX - minX + 1) / scale, height: CGFloat(maxRow - minRow + 1) / scale)
     }
 }
 
