@@ -144,6 +144,11 @@ enum DebugController {
         model.selectedId = shareConns.first?.id ?? useConns.first?.id
     }
 
+    /// The center of the mark's circle (its arc, fitted from logo-icon.svg's
+    /// path: (35.9, 50.3) in the 73×102 viewBox), as fractions of the logo
+    /// image, y from the top.
+    private static let markCircleCenter = CGPoint(x: 35.9 / 73, y: 50.3 / 102)
+
     /// Generate the macOS app-icon PNGs (the 2-color spore mark on a sage
     /// rounded-rect) at exact pixel sizes, into artifacts/appicon/.
     private static func genAppIcon() {
@@ -166,11 +171,16 @@ enum DebugController {
             bg.setFill(); card.fill()
             if let mark {
                 // The mark itself (not its SVG canvas, which has empty space
-                // below it), centered on the card
+                // below it), 64% of the card tall, with its circle's center on
+                // the card's center: the visual center. The tail pulls the
+                // bounding box up, so bbox-centering sits the circle low.
                 let source = mark.drawnBounds() ?? NSRect(origin: .zero, size: mark.size)
-                let mh = side * 0.64
-                let mw = mh * (source.width / max(source.height, 1))
-                mark.draw(in: NSRect(x: (s - mw) / 2, y: (s - mh) / 2, width: mw, height: mh),
+                let k = side * 0.64 / max(source.height, 1)
+                let circle = NSPoint(x: markCircleCenter.x * mark.size.width,
+                                     y: (1 - markCircleCenter.y) * mark.size.height)
+                mark.draw(in: NSRect(x: s / 2 - k * (circle.x - source.minX),
+                                     y: s / 2 - k * (circle.y - source.minY),
+                                     width: k * source.width, height: k * source.height),
                           from: source, operation: .sourceOver, fraction: 1)
             }
             NSGraphicsContext.restoreGraphicsState()

@@ -32,7 +32,10 @@ cmd_build() {
   xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
     -derivedDataPath "$DERIVED" -arch "$ARCH" build \
     -allowProvisioningUpdates | tail -1
-  # Register so `open spora-debug://…` routes to the app.
+  # Register so `open spora-debug://…` routes to the app. The touch makes the
+  # Dock's icon cache notice an in-place rebuild (a new app icon otherwise
+  # keeps showing the old one).
+  touch "$APP"
   [ -x "$LSREGISTER" ] && "$LSREGISTER" -f "$APP" >/dev/null 2>&1 || true
 }
 
