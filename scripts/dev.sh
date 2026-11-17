@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Spora macOS feedback harness — the counterpart to Android's emu.sh (ADR D6).
-# Subcommands: build · run [locale] · quit · shot [name] · state <cmd> [k=v…] · log
+# Subcommands: build [xcodebuild args…] · run [locale] · quit · shot [name] · state <cmd> [k=v…] · log
+#
+# `build` passes extra arguments to xcodebuild, e.g. DEVELOPMENT_TEAM=<team ID>
+# to sign with another team, or CODE_SIGNING_ALLOWED=NO for a compile-only build.
 #
 # States are driven through the DEBUG-only spora-debug:// URL scheme (same
 # command vocabulary as Android's DebugStateReceiver), so screenshot matrices
@@ -31,7 +34,7 @@ cmd_build() {
   command -v xcodegen >/dev/null && xcodegen generate >/dev/null
   xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
     -derivedDataPath "$DERIVED" -arch "$ARCH" build \
-    -allowProvisioningUpdates | tail -1
+    -allowProvisioningUpdates "$@" | tail -1
   # Register so `open spora-debug://…` routes to the app. The touch makes the
   # Dock's icon cache notice an in-place rebuild (a new app icon otherwise
   # keeps showing the old one).
@@ -87,5 +90,5 @@ case "${1:-}" in
   shot)  shift; cmd_shot "$@" ;;
   state) shift; cmd_state "$@" ;;
   log)   shift; cmd_log "$@" ;;
-  *) echo "usage: dev.sh {build|run [locale]|quit|shot [name]|state <cmd> [k=v…]|log}" >&2; exit 1 ;;
+  *) echo "usage: dev.sh {build [xcodebuild args…]|run [locale]|quit|shot [name]|state <cmd> [k=v…]|log}" >&2; exit 1 ;;
 esac

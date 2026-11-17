@@ -1,0 +1,6 @@
+# Ref (tag, branch, or sha) of github.com/Spora-VPN/spora that CI builds
+# against. The app links the core's spora-ffi as a static library built by
+# ../spora/build-ffi-apple.sh, so ci.yml checks the core repo out as a sibling
+# at exactly this ref. Bump it when the app needs newer core APIs (push the
+# core commit first).
+6275ea232fa2578aa05f6b6f879e763573951636

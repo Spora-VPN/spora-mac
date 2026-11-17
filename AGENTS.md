@@ -2,10 +2,10 @@
 
 Native macOS client for Spora (P2P VPN through a trusted friend). Swift + SwiftUI +
 NetworkExtension over the Rust core at `../spora` (UniFFI). Functional reference:
-`../spora-android`. Design source of truth: `Spora macOS.dc.html` (committed direction:
-window 1b master-detail + menu-bar popover 1d/2e; see `docs/adr-001-architecture.md`).
-Distribution: Mac App Store + Developer ID direct download from spora.to
-(`docs/adr-002-distribution.md`).
+`../spora-android`. Design source of truth: `.local/design/Spora macOS.dc.html` (committed
+direction: window 1b master-detail + menu-bar popover 1d/2e; see
+`.local/docs/adr-001-architecture.md`). Distribution: Mac App Store + Developer ID direct
+download from spora.to (`.local/docs/adr-002-distribution.md`).
 
 ## Build & run
 
@@ -21,8 +21,14 @@ Distribution: Mac App Store + Developer ID direct download from spora.to
 - `xcodebuild … -scheme Spora test` runs `SporaKitTests` (relay-address checks, error mapping,
   `SPORA_API` parsing, the store migration).
 - Rust FFI: `../spora/build-ffi-apple.sh` builds the staticlib + Swift bindings into
-  `rust-out/` here (gitignored: rebuild it after pulling the core). Built against core
-  `8f61d4c`. Rust changes are made in `../spora` (its own repo — commit separately).
+  `rust-out/` here (gitignored: rebuild it after pulling the core). Rust changes are made in
+  `../spora` (its own repo — commit separately).
+- Core pin: `.github/core-ref` names the core commit CI builds against (sibling checkout,
+  `.github/workflows/ci.yml`: unsigned Debug + Release builds and `SporaKitTests`). A local
+  build uses whatever `../spora` has checked out, so it can pass on core changes CI does not
+  have yet. Bump the pin to a pushed core commit in the change that needs it.
+- `scripts/dev.sh build` passes extra arguments to xcodebuild (`DEVELOPMENT_TEAM=…`,
+  `CODE_SIGNING_ALLOWED=NO` for a compile-only build).
 - **Never contact production from development.** Spora's relays are on by default, so the
   first start registers the Mac with the core's API. Debug builds read `SPORA_API`
   (comma-separated, as the CLI reads it; set but blank is refused, never production); release
@@ -76,6 +82,11 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
 
 ## Rules
 
+- This repo is public. Internal notes, reviews and specs go in `.local/` (gitignored), never in
+  git: nothing from the private Spora repos, their internals, hosts, IPs or credentials. The
+  design docs (`.local/docs/`: the ADRs) and the designs (`.local/design/`: the canvas, the
+  `_ds/` design-system sync, the logo and icon sources) live there too; a fresh clone has
+  none of them. The app's own copies (`App/Resources/Assets.xcassets`) stay in git.
 - Every user-facing string via String Catalogs, locales en/ru/be, updated together.
   Micro-labels/statuses/buttons are ALREADY-UPPERCASE in source. `SPORA` literal is hardcoded,
   never localized. Guillemets « » around connection names in prose. No emoji.

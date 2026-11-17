@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  push:
+    branches: [main, ci]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Builds the core's FFI at the pinned ref, then the app and its tunnel
+  # extension, unsigned, in Debug and Release, and runs SporaKitTests. Signing
+  # and the NetworkExtension entitlements need Spora's team, which CI does not
+  # have.
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: spora-mac
+          persist-credentials: false
+
+      - name: Read pinned core ref
+        id: core
+        run: echo "ref=$(grep -v '^#' spora-mac/.github/core-ref | head -1)" >> "$GITHUB_OUTPUT"
+
+      # Sibling checkout: build-ffi-apple.sh stages its output into
+      # ../spora-mac/rust-out.
+      - uses: actions/checkout@v7
+        with:
+          repository: Spora-VPN/spora
+          ref: ${{ steps.core.outputs.ref }}
+          path: spora
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: spora
+          cache-on-failure: true
+
+      - name: Build the core (static library + Swift bindings)
+        working-directory: spora
+        run: ./build-ffi-apple.sh --debug
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate the Xcode project
+        working-directory: spora-mac
+        run: xcodegen generate
+
+      - name: Build (Debug)
+        working-directory: spora-mac
+        run: >
+          xcodebuild -project Spora.xcodeproj -scheme Spora -configuration Debug
+          -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      - name: Build (Release)
+        working-directory: spora-mac
+        run: >
+          xcodebuild -project Spora.xcodeproj -scheme Spora -configuration Release
+          -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      - name: Test (SporaKitTests)
+        working-directory: spora-mac
+        run: >
+          xcodebuild -project Spora.xcodeproj -scheme Spora
+          -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
