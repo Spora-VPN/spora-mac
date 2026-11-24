@@ -14,8 +14,8 @@ env:
 jobs:
   # Builds the core's FFI at the pinned ref, then the app and its tunnel
   # extension, unsigned, in Debug and Release, and runs SporaKitTests. Signing
-  # and the NetworkExtension entitlements need Spora's team, which CI does not
-  # have.
+  # and the NetworkExtension entitlements need a paid Apple Developer team,
+  # which CI does not have.
   build:
     runs-on: macos-15
     timeout-minutes: 45

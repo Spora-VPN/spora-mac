@@ -11,13 +11,15 @@ settings:
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
-    # Dev-signed on a paid team so the NetworkExtension packet-tunnel
-    # appex can run. Automatic signing + `-allowProvisioningUpdates` mints the
+    # No team here: scripts/dev.sh builds unsigned unless DEVELOPMENT_TEAM
+    # names one. The NetworkExtension packet-tunnel appex needs a paid team;
+    # with one, automatic signing + `-allowProvisioningUpdates` mints the
     # to.spora.mac / to.spora.mac.tunnel App IDs and profiles.
     CODE_SIGN_STYLE: Automatic
     # The app group the app and the tunnel extension share (connection
     # records and the diagnostic log live in its container; see SporaPaths).
-    # macOS team-prefixed form: no portal registration needed.
+    # macOS team-prefixed form: no portal registration needed. Without a
+    # team it has no prefix, and SporaPaths keeps to Application Support.
     SPORA_APP_GROUP: $(DEVELOPMENT_TEAM).to.spora.mac
     # The UniFFI-generated C module (spora_ffiFFI): a modulemap + header here,
     # the Rust staticlib (linked into SporaKit) provides its symbols. SporaKit's

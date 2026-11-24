@@ -27,8 +27,15 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   `.github/workflows/ci.yml`: unsigned Debug + Release builds and `SporaKitTests`). A local
   build uses whatever `../spora` has checked out, so it can pass on core changes CI does not
   have yet. Bump the pin to a pushed core commit in the change that needs it.
-- `scripts/dev.sh build` passes extra arguments to xcodebuild (`DEVELOPMENT_TEAM=…`,
-  `CODE_SIGNING_ALLOWED=NO` for a compile-only build).
+- Signing: the repo names no team. `scripts/dev.sh build` is unsigned unless
+  `DEVELOPMENT_TEAM=<team ID>` is set (environment or argument; then automatic signing with
+  `-allowProvisioningUpdates`); other arguments go to xcodebuild. An unsigned build runs all
+  but the tunnel extension (the window, the menu bar, shares): its app group is empty, so
+  records and the log go to Application Support/Spora (`SporaPaths.appGroup` ignores an
+  unprefixed group too), and `SecretStore` falls back to 0600 files where the Keychain would
+  prompt. The tunnel extension needs a paid team (NetworkExtension). Never commit a team ID.
+- For a share without production, run the core's open `relay` locally and seed it as an own
+  relay (`state relays spora=0 own=<host:port>`, then `state create-share`).
 - **Never contact production from development.** Spora's relays are on by default, so the
   first start registers the Mac with the core's API. Debug builds read `SPORA_API`
   (comma-separated, as the CLI reads it; set but blank is refused, never production); release
@@ -68,7 +75,7 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
   `~/Library/Caches/to.spora.mac/reports` (pruned after a day), handed to the share picker
   with support@spora.to prefilled for Mail. No Spora server involved.
 - **Where things live**: records (`records/`) and the diagnostic log (`diag/`) in the app group
-  container `$(DEVELOPMENT_TEAM).to.spora.mac` (`SPORA_APP_GROUP`), because the tunnel
+  container `$(DEVELOPMENT_TEAM).to.spora.mac` (`SPORA_APP_GROUP`; none without a team), because the tunnel
   extension writes them too and the app's service bundles and uploads them; the service state
   (`service/`) and connection logs (`connlog/`) in Application Support/Spora. All excluded from
   Time Machine. The system-extension packaging (ADR-002) runs as root, so its group container

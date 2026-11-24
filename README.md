@@ -26,9 +26,9 @@ scripts/dev.sh build
 
 `build-ffi-apple.sh` builds the core's FFI as a universal static library and generates its Swift bindings into `rust-out/` here (`--debug` for a faster debug build). `scripts/dev.sh build` generates `Spora.xcodeproj` from `project.yml` and builds it into `build/`.
 
-The project signs automatically with Spora's team. Extra arguments to `scripts/dev.sh build` go to `xcodebuild`, so `scripts/dev.sh build DEVELOPMENT_TEAM=<your team ID>` signs with yours. The packet tunnel needs a paid Apple Developer team (the NetworkExtension entitlement); without one, `scripts/dev.sh build CODE_SIGNING_ALLOWED=NO` still compiles everything, which is what CI does.
+The project names no Apple Developer team, so this build is unsigned. It runs everything except connecting: the window, the menu bar, settings and sharing. Connecting goes through the packet-tunnel extension, and Apple grants its NetworkExtension entitlement only to paid Apple Developer Program teams; a free Apple ID's personal team cannot sign it. With a paid team, `DEVELOPMENT_TEAM=<team ID> scripts/dev.sh build` signs with it (automatic signing registers the App IDs, this Mac and the profiles). Without one, the core's CLI connects a Mac on its own (`sudo spora use <link>`). Other arguments to `scripts/dev.sh build` go to `xcodebuild`.
 
-The tests: `xcodebuild -project Spora.xcodeproj -scheme Spora test`.
+The tests: `xcodebuild -project Spora.xcodeproj -scheme Spora CODE_SIGNING_ALLOWED=NO test`.
 
 The app talks to Spora's API (device registration, relay access, telemetry when switched on). A Debug build uses the API that `SPORA_API` names, comma-separated, and Spora's production API when it is unset; a Release build always uses production. `scripts/dev.sh run` sets `SPORA_API` to `http://127.0.0.1:9` (answers nothing) unless you set it yourself.
 

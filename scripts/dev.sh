@@ -2,8 +2,10 @@
 # Spora macOS feedback harness — the counterpart to Android's emu.sh (ADR D6).
 # Subcommands: build [xcodebuild args…] · run [locale] · quit · shot [name] · state <cmd> [k=v…] · log
 #
-# `build` passes extra arguments to xcodebuild, e.g. DEVELOPMENT_TEAM=<team ID>
-# to sign with another team, or CODE_SIGNING_ALLOWED=NO for a compile-only build.
+# `build` signs only with a team: DEVELOPMENT_TEAM=<team ID> in the environment
+# or as an argument. Without one the build is unsigned, and runs everything but
+# the packet tunnel (whose NetworkExtension entitlement needs a paid team).
+# Extra arguments go to xcodebuild.
 #
 # States are driven through the DEBUG-only spora-debug:// URL scheme (same
 # command vocabulary as Android's DebugStateReceiver), so screenshot matrices
@@ -32,9 +34,18 @@ send() { open "spora-debug://$1" >/dev/null 2>&1 || true; }
 
 cmd_build() {
   command -v xcodegen >/dev/null && xcodegen generate >/dev/null
+  # Unsigned unless a team is named. The empty app group keeps an unsigned
+  # build out of a group container it has no entitlement for.
+  local signing=(CODE_SIGNING_ALLOWED=NO SPORA_APP_GROUP=) arg
+  if [ -n "${DEVELOPMENT_TEAM:-}" ]; then
+    signing=(DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" -allowProvisioningUpdates)
+  fi
+  for arg in "$@"; do
+    if [[ $arg == DEVELOPMENT_TEAM=?* ]]; then signing=(-allowProvisioningUpdates); fi
+  done
   xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
     -derivedDataPath "$DERIVED" -arch "$ARCH" build \
-    -allowProvisioningUpdates "$@" | tail -1
+    "${signing[@]}" "$@" | tail -1
   # Register so `open spora-debug://…` routes to the app. The touch makes the
   # Dock's icon cache notice an in-place rebuild (a new app icon otherwise
   # keeps showing the old one).

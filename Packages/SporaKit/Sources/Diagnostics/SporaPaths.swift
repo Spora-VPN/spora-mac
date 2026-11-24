@@ -11,9 +11,11 @@ import Foundation
 /// describe the machine they were made on.
 public enum SporaPaths {
     /// The app group shared with the tunnel extension, if the build has one.
+    /// A build without a team has none (an empty or unprefixed
+    /// `.to.spora.mac`), and no entitlement for one either.
     public static var appGroup: String? {
         guard let id = Bundle.main.object(forInfoDictionaryKey: "SporaAppGroup") as? String,
-              !id.isEmpty, !id.hasPrefix("$(") else { return nil }
+              !id.isEmpty, !id.hasPrefix("$("), !id.hasPrefix(".") else { return nil }
         return id
     }
 

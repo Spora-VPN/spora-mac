@@ -10,8 +10,8 @@ import Security
 /// An ad-hoc signed build could meet a Keychain access-control prompt that
 /// blocks a headless run, so operations pass `kSecUseAuthenticationUI: fail`
 /// (a would-be prompt becomes an error) and fall back to a 0600 file under
-/// Application Support. Team-signed builds take the
-/// Keychain path silently and never use the fallback.
+/// Application Support. Team-signed builds take the Keychain path silently
+/// and never use the fallback.
 public struct SecretStore {
     private let service: String
     private let fileDir: URL
