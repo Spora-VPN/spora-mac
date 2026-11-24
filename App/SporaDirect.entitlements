@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Manage the packet tunnel via NETunnelProviderManager; its provider is
+	     the system extension, so the Developer ID value. -->
+	<key>com.apple.developer.networking.networkextension</key>
+	<array>
+		<string>packet-tunnel-provider-systemextension</string>
+	</array>
+	<!-- Activate the tunnel's system extension (OSSystemExtensionRequest). -->
+	<key>com.apple.developer.system-extension.install</key>
+	<true/>
+	<!-- Universal links: https://spora.to/s/<token> (see Spora.entitlements). -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:spora.to</string>
+	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>$(SPORA_APP_GROUP)</string>
+	</array>
+</dict>
+</plist>

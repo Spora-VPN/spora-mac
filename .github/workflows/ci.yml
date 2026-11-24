@@ -13,7 +13,8 @@ env:
 
 jobs:
   # Builds the core's FFI at the pinned ref, then the app and its tunnel
-  # extension, unsigned, in Debug and Release, and runs SporaKitTests. Signing
+  # extension, unsigned, in Debug and Release, the direct download's build
+  # (system extension) in Release, and runs SporaKitTests. Signing
   # and the NetworkExtension entitlements need a paid Apple Developer team,
   # which CI does not have.
   build:
@@ -69,6 +70,13 @@ jobs:
         run: >
           xcodebuild -project Spora.xcodeproj -scheme Spora -configuration Release
           -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      # The direct download: the tunnel as a system extension (SPORA_DIRECT).
+      - name: Build direct (Release)
+        working-directory: spora-mac
+        run: >
+          xcodebuild -project Spora.xcodeproj -scheme SporaDirect -configuration Release
+          -derivedDataPath build-direct CODE_SIGNING_ALLOWED=NO build
 
       - name: Test (SporaKitTests)
         working-directory: spora-mac

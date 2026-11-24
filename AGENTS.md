@@ -38,6 +38,20 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   records and the log go to Application Support/Spora (`SporaPaths.appGroup` ignores an
   unprefixed group too), and `SecretStore` falls back to 0600 files where the Keychain would
   prompt. The tunnel extension needs a paid team (NetworkExtension). Never commit a team ID.
+- **Direct download build** (ADR-002): the `SporaDirect` target is the same app with
+  `SPORA_DIRECT` set, embedding the tunnel as a system extension (`SporaTunnelSysExt`: the
+  `Tunnel/` sources plus `TunnelSystemExtension/`, its own SporaKit copy, bundle named after
+  its id) instead of the appex. Before each connect it activates the extension
+  (`ExtensionActivator`); the first time, macOS waits for the user to allow it, and
+  `ApproveExtensionSheet` shows how. `scripts/dev.sh --direct build` signs it with Developer
+  ID (manual signing: `DEVELOPMENT_TEAM`, the profiles named by `SPORA_PROFILE_APP` /
+  `SPORA_PROFILE_TUNNEL`, a fresh build number so sysextd replaces the extension), then
+  `--direct notarize` (sysextd refuses an extension Apple has not notarized, a local test
+  build too; keychain profile `SPORA_NOTARY_PROFILE`), `--direct install` (to
+  /Applications, the only place macOS activates it from), `--direct run`. Signing and
+  notarizing need the login keychain: over SSH, run them in the logged-in user's session
+  (`sudo launchctl asuser <uid> sudo -u <user> …`). Test with Debug only: a Release build
+  talks to production.
 - For a share without production, run the core's open `relay` locally and seed it as an own
   relay (`state relays spora=0 own=<host:port>`, then `state create-share`).
 - **Never contact production from development.** Spora's relays are on by default, so the

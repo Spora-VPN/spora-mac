@@ -63,6 +63,8 @@ struct ContentView: View {
             FeedbackSheet()
         case .telemetryRequired:
             TelemetryRequiredSheet()
+        case .approveExtension:
+            ApproveExtensionSheet()
         }
     }
 }

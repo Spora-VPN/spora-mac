@@ -4048,6 +4048,190 @@
           }
         }
       }
+    },
+    "extension_approve_header": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ONE-TIME SETUP"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "РАЗОВАЯ НАСТРОЙКА"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДНАРАЗОВАЯ НАЛАДА"
+          }
+        }
+      }
+    },
+    "extension_approve_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Spora's network extension"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разрешите сетевое расширение Spora"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дазвольце сеткавае пашырэнне Spora"
+          }
+        }
+      }
+    },
+    "extension_approve_message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora connects through a network extension, and macOS asks you to allow it once."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora подключается через сетевое расширение, и macOS один раз просит его разрешить."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora падключаецца праз сеткавае пашырэнне, і macOS адзін раз просіць яго дазволіць."
+          }
+        }
+      }
+    },
+    "extension_approve_steps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings, click the info button next to Network Extensions, and turn on Spora. macOS may ask for your password. Then allow Spora to add its VPN configuration."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откройте Системные настройки, нажмите кнопку информации рядом с «Сетевые расширения» и включите Spora. macOS может спросить пароль. Затем разрешите Spora добавить конфигурацию VPN."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адкрыйце Сістэмныя налады, націсніце кнопку інфармацыі побач з сеткавымі пашырэннямі і ўключыце Spora. macOS можа спытаць пароль. Потым дазвольце Spora дадаць канфігурацыю VPN."
+          }
+        }
+      }
+    },
+    "extension_approve_steps_legacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings, find the note that system software from Spora was blocked, and click Allow. macOS may ask for your password. Then allow Spora to add its VPN configuration."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откройте Системные настройки, найдите сообщение о том, что системное ПО от Spora заблокировано, и нажмите «Разрешить». macOS может спросить пароль. Затем разрешите Spora добавить конфигурацию VPN."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адкрыйце Сістэмныя налады, знайдзіце паведамленне пра заблакаванае сістэмнае ПЗ ад Spora і дазвольце яго. macOS можа спытаць пароль. Потым дазвольце Spora дадаць канфігурацыю VPN."
+          }
+        }
+      }
+    },
+    "extension_approve_open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPEN SYSTEM SETTINGS"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОТКРЫТЬ НАСТРОЙКИ"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "АДКРЫЦЬ НАЛАДЫ"
+          }
+        }
+      }
+    },
+    "error_extension_not_allowed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spora's network extension isn't allowed yet. Connect again and allow it in System Settings."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сетевое расширение Spora ещё не разрешено. Подключитесь снова и разрешите его в Системных настройках."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сеткавае пашырэнне Spora яшчэ не дазволена. Падключыцеся зноў і дазвольце яго ў Сістэмных наладах."
+          }
+        }
+      }
+    },
+    "error_not_in_applications": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move Spora to the Applications folder, then connect again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переместите Spora в папку «Программы» и подключитесь снова."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перамясціце Spora ў папку праграм і падключыцеся зноў."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

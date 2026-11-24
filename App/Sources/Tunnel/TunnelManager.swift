@@ -4,7 +4,8 @@ import NetworkExtension
 /// App-side wrapper over `NETunnelProviderManager` for the connect/use side.
 /// Owns the saved VPN configuration, starts/stops the tunnel, and reports the
 /// authoritative `NEVPNStatus` back to `AppController` (which reconciles it into
-/// `AppModel`, ADR D3). The provider bundle is the embedded appex.
+/// `AppModel`, ADR D3). The provider is the embedded appex, or in the direct
+/// build (`SPORA_DIRECT`) the system extension, activated before each connect.
 @MainActor
 final class TunnelManager {
     private let providerBundleId = "to.spora.macos.tunnel"
@@ -13,6 +14,19 @@ final class TunnelManager {
 
     /// Reports tunnel state transitions from `NEVPNStatus`.
     var onStatus: ((NEVPNStatus) -> Void)?
+
+#if SPORA_DIRECT
+    private let activator = ExtensionActivator()
+    /// `true`: macOS waits for the user to allow the system extension (the
+    /// first connect), so show them how; `false`: it no longer waits.
+    var onAwaitingApproval: ((Bool) -> Void)?
+
+    /// Stop waiting for the user to allow the extension: the pending
+    /// `connect` throws `ExtensionActivator.Failure.notAllowed`.
+    func cancelApproval() {
+        activator.cancel()
+    }
+#endif
 
     /// Adopt an already-saved/running tunnel at launch. Returns the current
     /// status and the configured URL (so the caller can attribute it to a saved
@@ -27,8 +41,20 @@ final class TunnelManager {
     }
 
     /// Save the config (first time → the OS VPN-approval dialog) and start the
-    /// tunnel with the share URL.
+    /// tunnel with the share URL. The direct build first activates the
+    /// system extension (first time → the user allows it in System Settings).
     func connect(url: String) async throws {
+#if SPORA_DIRECT
+        do {
+            try await activator.activate(identifier: providerBundleId) { [weak self] in
+                self?.onAwaitingApproval?(true)
+            }
+        } catch {
+            onAwaitingApproval?(false)
+            throw error
+        }
+        onAwaitingApproval?(false)
+#endif
         let m = try await loadOrCreate()
         let proto = NETunnelProviderProtocol()
         proto.providerBundleIdentifier = providerBundleId

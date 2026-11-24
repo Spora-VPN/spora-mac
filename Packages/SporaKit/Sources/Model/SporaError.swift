@@ -22,6 +22,12 @@ public enum SporaError: Error, Equatable, Sendable, Codable, CaseIterable {
     case noSporaRelays
     case vpnPermissionDenied
     case vpnUnavailable
+    /// The direct build's tunnel is a system extension: the user has not
+    /// allowed it (yet) in System Settings.
+    case extensionNotAllowed
+    /// The direct build runs outside /Applications, where macOS refuses to
+    /// activate a system extension.
+    case notInApplications
     case generic
 
     /// String Catalog key for the localized message.
@@ -37,6 +43,8 @@ public enum SporaError: Error, Equatable, Sendable, Codable, CaseIterable {
         case .noSporaRelays: return "error_no_spora_relays"
         case .vpnPermissionDenied: return "error_vpn_permission"
         case .vpnUnavailable: return "error_vpn_unavailable"
+        case .extensionNotAllowed: return "error_extension_not_allowed"
+        case .notInApplications: return "error_not_in_applications"
         case .generic: return "error_generic"
         }
     }
@@ -63,6 +71,8 @@ public enum SporaError: Error, Equatable, Sendable, Codable, CaseIterable {
         case "NO_SPORA_RELAYS": self = .noSporaRelays
         case "VPN_PERMISSION_DENIED", "VPN_PERMISSION": self = .vpnPermissionDenied
         case "VPN_UNAVAILABLE": self = .vpnUnavailable
+        case "EXTENSION_NOT_ALLOWED": self = .extensionNotAllowed
+        case "NOT_IN_APPLICATIONS": self = .notInApplications
         default: self = .generic
         }
     }

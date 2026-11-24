@@ -72,37 +72,41 @@ targets:
     dependencies:
       - target: SporaKit
 
+  # The App Store build (and the day-to-day dev build): the tunnel as an app
+  # extension in Contents/PlugIns. App extensions are App Store only on macOS
+  # (TN3134), so the spora.to download is SporaDirect below.
   Spora:
-    type: application
-    platform: macOS
-    sources:
-      - path: App
-        excludes:
-          - "Info.plist"
-          - "Resources/Fonts"
-      # Folder reference so the IBM Plex TTFs land in Resources/Fonts/ (intact
-      # subdir), matching ATSApplicationFontsPath. SporaDesign also registers
-      # them programmatically at launch as a backstop.
-      - path: App/Resources/Fonts
-        type: folder
-        buildPhase: resources
+    templates: [SporaApp]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos
-        INFOPLIST_FILE: App/Info.plist
-        GENERATE_INFOPLIST_FILE: "NO"
         ENABLE_HARDENED_RUNTIME: "NO"
-        COMBINE_HIDPI_IMAGES: "YES"
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: App/Spora.entitlements
-        # Fonts bundled in Resources are registered via ATSApplicationFontsPath.
     dependencies:
-      - target: SporaKit
-        embed: true
-      - target: SporaDesign
-        embed: true
       - target: SporaTunnelExt
         embed: true   # into Contents/PlugIns
+
+  # The direct download from spora.to (ADR-002): Developer ID signed and
+  # notarized, the tunnel as a system extension in
+  # Contents/Library/SystemExtensions, activated on the first connect
+  # (`SPORA_DIRECT`). Same bundle ids as the App Store build; the two are
+  # never installed together.
+  SporaDirect:
+    templates: [SporaApp]
+    settings:
+      base:
+        PRODUCT_NAME: Spora
+        ENABLE_HARDENED_RUNTIME: "YES"
+        CODE_SIGN_ENTITLEMENTS: App/SporaDirect.entitlements
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) SPORA_DIRECT
+        # Developer ID builds sign by hand (scripts/dev.sh --direct): the
+        # profile's name comes from the environment, never the repo.
+        PROVISIONING_PROFILE_SPECIFIER: $(SPORA_PROFILE_APP)
+    dependencies:
+      - target: SporaTunnelSysExt
+        embed: true
+        copy:
+          destination: wrapper
+          subpath: Contents/Library/SystemExtensions
 
   # NetworkExtension packet-tunnel app extension (connect/use side). Stays a thin
   # sandboxed shim (ADR): it locates the utun fd and hands a dup to Rust's
@@ -114,6 +118,7 @@ targets:
       - path: Tunnel
         excludes:
           - "Info.plist"
+          - "*.entitlements"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos.tunnel
@@ -133,6 +138,74 @@ targets:
       - sdk: NetworkExtension.framework
       - sdk: SystemConfiguration.framework
 
+  # The same provider packaged as a system extension (SporaDirect). sysextd runs
+  # a copy from /Library/SystemExtensions as root, out of the host app's reach,
+  # so it carries its own SporaKit. The bundle is named after its identifier,
+  # where OSSystemExtensionRequest looks for it.
+  SporaTunnelSysExt:
+    type: system-extension
+    platform: macOS
+    sources:
+      - path: Tunnel
+        excludes:
+          - "Info.plist"
+          - "*.entitlements"
+      - path: TunnelSystemExtension
+        excludes:
+          - "Info.plist"
+          - "*.entitlements"
+    settings:
+      base:
+        PRODUCT_NAME: to.spora.macos.tunnel
+        PRODUCT_MODULE_NAME: SporaTunnel
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos.tunnel
+        INFOPLIST_FILE: TunnelSystemExtension/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        ENABLE_HARDENED_RUNTIME: "YES"
+        CODE_SIGN_ENTITLEMENTS: TunnelSystemExtension/SporaTunnelSysExt.entitlements
+        PROVISIONING_PROFILE_SPECIFIER: $(SPORA_PROFILE_TUNNEL)
+        SKIP_INSTALL: "YES"
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/../Frameworks"
+    dependencies:
+      - target: SporaKit
+        embed: true    # into the extension's own Contents/Frameworks
+      - sdk: NetworkExtension.framework
+      - sdk: SystemConfiguration.framework
+
+targetTemplates:
+  # What both app builds share: everything but the tunnel's packaging, its
+  # entitlements and the hardened runtime.
+  SporaApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+        excludes:
+          - "Info.plist"
+          - "*.entitlements"
+          - "Resources/Fonts"
+      # Folder reference so the IBM Plex TTFs land in Resources/Fonts/ (intact
+      # subdir), matching ATSApplicationFontsPath. SporaDesign also registers
+      # them programmatically at launch as a backstop.
+      - path: App/Resources/Fonts
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos
+        INFOPLIST_FILE: App/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        COMBINE_HIDPI_IMAGES: "YES"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Fonts bundled in Resources are registered via ATSApplicationFontsPath.
+    dependencies:
+      - target: SporaKit
+        embed: true
+      - target: SporaDesign
+        embed: true
+
 schemes:
   Spora:
     build:
@@ -145,3 +218,11 @@ schemes:
       config: Debug
       targets:
         - SporaKitTests
+  # The direct download's build (unsigned unless scripts/dev.sh --direct signs
+  # it with Developer ID).
+  SporaDirect:
+    build:
+      targets:
+        SporaDirect: all
+    run:
+      config: Debug

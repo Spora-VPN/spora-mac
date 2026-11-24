@@ -3,6 +3,7 @@
 
 # Xcode / Swift
 build/
+build-direct/
 DerivedData/
 *.xcuserdatad/
 xcuserdata/

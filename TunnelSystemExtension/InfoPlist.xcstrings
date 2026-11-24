@@ -1,0 +1,29 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSSystemExtensionUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carries this Mac's traffic through the Spora connection you turn on."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Направляет трафик этого Mac через подключение Spora, которое вы включаете."
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Накіроўвае трафік гэтага Mac праз падключэнне Spora, якое вы ўключаеце."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

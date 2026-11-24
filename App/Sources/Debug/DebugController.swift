@@ -101,6 +101,7 @@ enum DebugController {
             case "relay-edit": controller.sheet = .relayEditor(index: index)
             case "relay-remove": controller.sheet = .removeRelay(index: index)
             case "connect": controller.sheet = .saveConnection(prefillURL: nil)
+            case "approve-extension": controller.sheet = .approveExtension
             default: controller.sheet = nil
             }
         case "share-starting": if let id = q["id"] { model.shareStarting(id) }

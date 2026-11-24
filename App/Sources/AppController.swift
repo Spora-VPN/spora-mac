@@ -68,6 +68,8 @@ final class AppController: ObservableObject {
         case removeRelay(index: Int)
         case feedback
         case telemetryRequired
+        /// The direct build's first connect: allow the system extension.
+        case approveExtension
 
         var id: String {
             switch self {
@@ -76,6 +78,7 @@ final class AppController: ObservableObject {
             case .removeRelay(let i): return "remove-\(i)"
             case .feedback: return "feedback"
             case .telemetryRequired: return "telemetry-required"
+            case .approveExtension: return "approve-extension"
             }
         }
     }
@@ -87,6 +90,9 @@ final class AppController: ObservableObject {
         loadPersisted()
         notifications.configure(controller: self)
         tunnel.onStatus = { [weak self] status in self?.handleTunnelStatus(status) }
+#if SPORA_DIRECT
+        tunnel.onAwaitingApproval = { [weak self] waiting in self?.awaitingApproval(waiting) }
+#endif
         // Reconcile an already-running tunnel (app relaunched while connected).
         Task { [weak self] in
             guard let self,
@@ -212,13 +218,62 @@ final class AppController: ObservableObject {
                 do {
                     try await self.tunnel.connect(url: use.url)
                 } catch {
-                    // Most commonly the user declined the VPN-approval dialog.
                     SporaLog.w(Self.tag, "tunnel not started", error)
-                    self.model.connectFailed(.vpnPermissionDenied, id: id)
+                    self.model.connectFailed(Self.tunnelStartError(error), id: id)
                     self.connectingUseId = nil
                 }
             }
         }
+    }
+
+    /// Why the tunnel did not start. Most commonly the user declined the
+    /// VPN-approval dialog; the direct build's extension adds its own.
+    private static func tunnelStartError(_ error: Error) -> SporaError {
+#if SPORA_DIRECT
+        if let failure = error as? ExtensionActivator.Failure {
+            switch failure {
+            case .notAllowed: return .extensionNotAllowed
+            case .notInApplications: return .notInApplications
+            case .failed, .needsReboot: return .vpnUnavailable
+            }
+        }
+#endif
+        return .vpnPermissionDenied
+    }
+
+#if SPORA_DIRECT
+    /// macOS holds the extension until the user allows it: the guide stays up
+    /// while it waits, and goes once the request ends either way.
+    private func awaitingApproval(_ waiting: Bool) {
+        if waiting {
+            NSApp.activate(ignoringOtherApps: true)
+            sheet = .approveExtension
+        } else if sheet == .approveExtension {
+            sheet = nil
+        }
+    }
+#endif
+
+    /// The approval guide's OPEN SYSTEM SETTINGS: where macOS lists the
+    /// extension (Login Items & Extensions since macOS 15, Privacy &
+    /// Security before).
+    func openExtensionSettings() {
+        let pane = ProcessInfo.processInfo.isOperatingSystemAtLeast(
+            OperatingSystemVersion(majorVersion: 15, minorVersion: 0, patchVersion: 0))
+            ? "com.apple.LoginItems-Settings.extension"
+            : "com.apple.settings.PrivacySecurity.extension"
+        if let url = URL(string: "x-apple.systempreferences:\(pane)") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    /// The approval guide's CANCEL: stop waiting (the connect fails with
+    /// `extensionNotAllowed`).
+    func cancelExtensionApproval() {
+#if SPORA_DIRECT
+        tunnel.cancelApproval()
+#endif
+        if sheet == .approveExtension { sheet = nil }
     }
 
     /// Reconcile the authoritative NEVPNStatus into the model (ADR D3).
