@@ -1,6 +1,6 @@
 name: Spora
 options:
-  bundleIdPrefix: to.spora.mac
+  bundleIdPrefix: to.spora.macos
   deploymentTarget:
     macOS: "13.0"
   createIntermediateGroups: true
@@ -13,14 +13,14 @@ settings:
     SWIFT_VERSION: "5.9"
     # No team here: scripts/dev.sh builds unsigned unless DEVELOPMENT_TEAM
     # names one. The NetworkExtension packet-tunnel appex needs a paid team;
-    # with one, automatic signing + `-allowProvisioningUpdates` mints the
-    # to.spora.mac / to.spora.mac.tunnel App IDs and profiles.
+    # with one, automatic signing + `-allowProvisioningUpdates` makes the
+    # profiles for the to.spora.macos / to.spora.macos.tunnel App IDs.
     CODE_SIGN_STYLE: Automatic
     # The app group the app and the tunnel extension share (connection
     # records and the diagnostic log live in its container; see SporaPaths).
     # macOS team-prefixed form: no portal registration needed. Without a
     # team it has no prefix, and SporaPaths keeps to Application Support.
-    SPORA_APP_GROUP: $(DEVELOPMENT_TEAM).to.spora.mac
+    SPORA_APP_GROUP: $(DEVELOPMENT_TEAM).to.spora.macos
     # The UniFFI-generated C module (spora_ffiFFI): a modulemap + header here,
     # the Rust staticlib (linked into SporaKit) provides its symbols. SporaKit's
     # interface imports it, so every target that imports SporaKit needs it too
@@ -35,7 +35,7 @@ targets:
       - path: Packages/SporaDesign/Sources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaDesign
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos.SporaDesign
         DEFINES_MODULE: "YES"
         GENERATE_INFOPLIST_FILE: "YES"
         SKIP_INSTALL: "NO"
@@ -49,7 +49,7 @@ targets:
       - path: rust-out/Sources/SporaFFI/spora_ffi.swift
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaKit
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos.SporaKit
         DEFINES_MODULE: "YES"
         GENERATE_INFOPLIST_FILE: "YES"
         SKIP_INSTALL: "NO"
@@ -67,7 +67,7 @@ targets:
       - path: Packages/SporaKit/Tests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaKitTests
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos.SporaKitTests
         GENERATE_INFOPLIST_FILE: "YES"
     dependencies:
       - target: SporaKit
@@ -88,7 +88,7 @@ targets:
         buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos
         INFOPLIST_FILE: App/Info.plist
         GENERATE_INFOPLIST_FILE: "NO"
         ENABLE_HARDENED_RUNTIME: "NO"
@@ -116,7 +116,7 @@ targets:
           - "Info.plist"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.tunnel
+        PRODUCT_BUNDLE_IDENTIFIER: to.spora.macos.tunnel
         INFOPLIST_FILE: Tunnel/Info.plist
         GENERATE_INFOPLIST_FILE: "NO"
         ENABLE_HARDENED_RUNTIME: "NO"

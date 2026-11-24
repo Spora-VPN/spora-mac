@@ -27,6 +27,10 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   `.github/workflows/ci.yml`: unsigned Debug + Release builds and `SporaKitTests`). A local
   build uses whatever `../spora` has checked out, so it can pass on core changes CI does not
   have yet. Bump the pin to a pushed core commit in the change that needs it.
+- Bundle ids: `to.spora.macos` (the app) and `to.spora.macos.tunnel` (the tunnel, in both
+  packagings). `to.spora.mac` is registered to another team: don't go back to it. Once a
+  release ships, they never change (the extension's replacement, the VPN configuration and
+  the Keychain items all key on them).
 - Signing: the repo names no team. `scripts/dev.sh build` is unsigned unless
   `DEVELOPMENT_TEAM=<team ID>` is set (environment or argument; then automatic signing with
   `-allowProvisioningUpdates`); other arguments go to xcodebuild. An unsigned build runs all
@@ -72,10 +76,10 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
   the upload switch; the force notice (`TelemetryRequiredSheet`) has one owner,
   `AppController`. Pages poll the service every 2 s while open.
 - **Feedback** (sidebar, Help menu, the force notice): `exportBugReport` zip into
-  `~/Library/Caches/to.spora.mac/reports` (pruned after a day), handed to the share picker
+  `~/Library/Caches/to.spora.macos/reports` (pruned after a day), handed to the share picker
   with support@spora.to prefilled for Mail. No Spora server involved.
 - **Where things live**: records (`records/`) and the diagnostic log (`diag/`) in the app group
-  container `$(DEVELOPMENT_TEAM).to.spora.mac` (`SPORA_APP_GROUP`; none without a team), because the tunnel
+  container `$(DEVELOPMENT_TEAM).to.spora.macos` (`SPORA_APP_GROUP`; none without a team), because the tunnel
   extension writes them too and the app's service bundles and uploads them; the service state
   (`service/`) and connection logs (`connlog/`) in Application Support/Spora. All excluded from
   Time Machine. The system-extension packaging (ADR-002) runs as root, so its group container

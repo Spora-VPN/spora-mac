@@ -12,7 +12,7 @@ import Foundation
 public enum SporaPaths {
     /// The app group shared with the tunnel extension, if the build has one.
     /// A build without a team has none (an empty or unprefixed
-    /// `.to.spora.mac`), and no entitlement for one either.
+    /// `.to.spora.macos`), and no entitlement for one either.
     public static var appGroup: String? {
         guard let id = Bundle.main.object(forInfoDictionaryKey: "SporaAppGroup") as? String,
               !id.isEmpty, !id.hasPrefix("$("), !id.hasPrefix(".") else { return nil }
@@ -75,7 +75,7 @@ public enum SporaPaths {
     public static var reportsDir: URL {
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
             ?? URL(fileURLWithPath: NSTemporaryDirectory())
-        return privateDir(caches.appendingPathComponent("to.spora.mac/reports", isDirectory: true))
+        return privateDir(caches.appendingPathComponent("to.spora.macos/reports", isDirectory: true))
     }
 
     /// Route the core's logging to the unified log and the diagnostic log

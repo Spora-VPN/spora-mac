@@ -7,7 +7,7 @@ import NetworkExtension
 /// `AppModel`, ADR D3). The provider bundle is the embedded appex.
 @MainActor
 final class TunnelManager {
-    private let providerBundleId = "to.spora.mac.tunnel"
+    private let providerBundleId = "to.spora.macos.tunnel"
     private var manager: NETunnelProviderManager?
     private var statusObserver: NSObjectProtocol?
 

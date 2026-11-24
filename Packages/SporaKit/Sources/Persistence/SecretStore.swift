@@ -17,7 +17,7 @@ public struct SecretStore {
     private let fileDir: URL
 
     /// - Parameters:
-    ///   - service: the Keychain service, e.g. `to.spora.mac.share`.
+    ///   - service: the Keychain service, e.g. `to.spora.macos.share`.
     ///   - fileDirName: the fallback directory under Application Support/Spora.
     public init(service: String, fileDirName: String) {
         self.service = service
@@ -27,14 +27,14 @@ public struct SecretStore {
     }
 
     /// Shares' blobs, by connection id.
-    public static let shares = SecretStore(service: "to.spora.mac.share", fileDirName: "shares")
+    public static let shares = SecretStore(service: "to.spora.macos.share", fileDirName: "shares")
     /// Before shares were the core's: a per-share identity, by connection id.
     /// Only read to delete what an older version left.
-    static let legacyIdentities = SecretStore(service: "to.spora.mac.identity", fileDirName: "identities")
+    static let legacyIdentities = SecretStore(service: "to.spora.macos.identity", fileDirName: "identities")
     /// The key the core's service seals `service.json`'s secrets with.
-    public static let serviceKey = SecretStore(service: "to.spora.mac.service-key", fileDirName: "service-key")
+    public static let serviceKey = SecretStore(service: "to.spora.macos.service-key", fileDirName: "service-key")
     /// The relay settings (own relays' tokens are secrets).
-    public static let relaySettings = SecretStore(service: "to.spora.mac.relay-settings", fileDirName: "relay-settings")
+    public static let relaySettings = SecretStore(service: "to.spora.macos.relay-settings", fileDirName: "relay-settings")
 
     /// Whether the bytes are stored (Keychain, else the 0600 file).
     @discardableResult

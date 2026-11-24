@@ -89,7 +89,7 @@ final class ServiceTests: XCTestCase {
 
 final class ConnectionStoreTests: XCTestCase {
     private var defaults: UserDefaults!
-    private let suite = "to.spora.mac.tests.\(UUID().uuidString)"
+    private let suite = "to.spora.macos.tests.\(UUID().uuidString)"
 
     override func setUp() {
         defaults = UserDefaults(suiteName: suite)
@@ -109,7 +109,7 @@ final class ConnectionStoreTests: XCTestCase {
         """
         defaults.set(Data(legacy.utf8), forKey: "spora.connections.v1")
         let store = ConnectionStore(defaults: defaults,
-                                    blobs: SecretStore(service: "to.spora.mac.tests", fileDirName: "tests"))
+                                    blobs: SecretStore(service: "to.spora.macos.tests", fileDirName: "tests"))
         let loaded = store.load()
         XCTAssertTrue(loaded.shares.isEmpty)
         XCTAssertEqual(loaded.uses.map(\.id), ["use-1"])
