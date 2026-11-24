@@ -51,7 +51,11 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
 - **Shares** are the core's: an immutable blob per link (`makeShare` via `ShareMaker`, on the
   relays the settings name), in the Keychain (`SecretStore.shares`); the URL is `shareUrl(blob)`,
   never stored. `startShare` gets a per-share connection log (`connlog/<share id>`) and the
-  record dir. A blob made under another device identity fails with `IdentityMismatch` →
+  record dir. Deleting a share keeps its log (the sharer's record of what it was used for), but
+  not past its retention: every running share sweeps the others' logs
+  (`connLogSweepSiblings: true`, so `connlog/` holds nothing but one directory per share), and
+  `SporaApp.init` sweeps them all after `initLogging` (`SporaPaths.sweepConnectionLogs`, the
+  core's `sweepConnLogs`). A blob made under another device identity fails with `IdentityMismatch` →
   `shareLinkLost`, whose action is MAKE A NEW LINK (new blob, same id and name). Shares saved
   before this (identity-based, `spora.connections.v1`) are dropped at load.
 - **Settings** open in the window's detail region as a page stack (`AppController.settingsPages`):
@@ -70,7 +74,10 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
   Time Machine. The system-extension packaging (ADR-002) runs as root, so its group container
   is not the user's: it will need another way to hand records over.
 - **Logging: `SporaLog` (d/i/w/e), never `NSLog`/`print`.** Unified log (subsystem
-  `to.spora`) plus the core's diagnostic log file. Never log a blob, a token or a URL.
+  `to.spora`) plus the core's diagnostic log file. Never log a blob, a token or a URL. The
+  core's flow lines (a share's client destinations) reach the unified log only from a debug
+  build of the core (`build-ffi-apple.sh --debug`); a release build keeps them out, and the
+  diagnostic file never takes them. Ship only a release build of the core.
 - `NetworkReporter` (NWPathMonitor, utun excluded) tells the core the underlying network, in
   each process that runs tunnels: the app (shares) and the tunnel extension.
 - The tunnel extension: `initLogging` into the shared log, `connectUtun(recordDir:)`, and the

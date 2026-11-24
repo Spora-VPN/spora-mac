@@ -45,11 +45,28 @@ public enum SporaPaths {
     /// upload switch, the device and relay tokens).
     public static var stateDir: URL { privateDir(appSupport.appendingPathComponent("service", isDirectory: true)) }
 
+    /// The connection logs' root: one directory per share and nothing else,
+    /// so a running share may sweep the others' logs
+    /// (`startShare(…, connLogSweepSiblings: true)`).
+    static let connLogRoot = appSupport.appendingPathComponent("connlog", isDirectory: true)
+
     /// A share's connection log: one directory per share, because the core
     /// binds a connection-log database to the share that created it.
     public static func connLogDir(shareId: String) -> URL {
-        let root = privateDir(appSupport.appendingPathComponent("connlog", isDirectory: true))
-        return privateDir(root.appendingPathComponent(shareId, isDirectory: true))
+        privateDir(privateDir(connLogRoot).appendingPathComponent(shareId, isDirectory: true))
+    }
+
+    /// Deletes what is past its retention from every share's connection log,
+    /// deleted shares' too, as a running share does for the others: at app
+    /// start no share may be running to do it. A deleted share keeps its log
+    /// (the sharer's record of what it was used for), but not past its
+    /// retention. Blocking (SQLite): off the main thread.
+    public static func sweepConnectionLogs() {
+        guard FileManager.default.fileExists(atPath: connLogRoot.path) else { return }
+        let deleted = sweepConnLogs(connLogRoot: connLogRoot.path)
+        if deleted > 0 {
+            SporaLog.i("SporaPaths", "connection logs: deleted \(deleted) records past retention")
+        }
     }
 
     /// Bug reports on their way to the user's mail (pruned after a day).

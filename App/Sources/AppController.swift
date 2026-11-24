@@ -168,11 +168,14 @@ final class AppController: ObservableObject {
                 let result = try await offMain {
                     // The connection log is a liability record for the sharer,
                     // so it is always on; one directory per share (the core
-                    // binds a database to the share that created it)
+                    // binds a database to the share that created it). A
+                    // deleted share keeps its log, and every running share
+                    // sweeps the others' by retention.
                     try startShare(shareBlob: blob, protector: nil,
                                    connLogDir: SporaPaths.connLogDir(shareId: try shareId(shareBlob: blob)).path,
                                    connLogRetentionDays: nil, connLogSessionsOnly: false,
-                                   recordDir: SporaPaths.recordDir.path)
+                                   recordDir: SporaPaths.recordDir.path,
+                                   connLogSweepSiblings: true)
                 }
                 guard let self, self.startTokens[id] == token else {
                     // Stopped (or deleted) while startShare was blocked: the

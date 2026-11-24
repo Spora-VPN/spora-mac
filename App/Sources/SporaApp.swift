@@ -13,6 +13,9 @@ struct SporaApp: App {
         // Before anything logs: the diagnostic log file, and crash capture
         SporaKit.initLogging()
         CrashCapture.install()
+        // The connection logs of shares that no longer run, swept by
+        // retention (after initLogging, so its lines reach the log file)
+        DispatchQueue.global(qos: .utility).async { SporaPaths.sweepConnectionLogs() }
         let model = AppModel()
         let service = ServiceController()
         _model = StateObject(wrappedValue: model)
