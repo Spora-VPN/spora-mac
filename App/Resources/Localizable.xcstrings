@@ -2951,19 +2951,19 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "With telemetry off, nothing is uploaded. Once it has been on, Spora still checks with us about once a day whether your account requires it, and if it does, turns it back on and tells you. Feedback comes with a report, and it goes out only when you send it."
+            "value": "With telemetry off, nothing is uploaded. Spora still checks with us about once a day whether your account requires it, and if it does, turns it on and tells you. Feedback comes with a report, and it goes out only when you send it."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Когда телеметрия выключена, ничего не отправляется. Но если она хоть раз была включена, Spora примерно раз в день уточняет у нас, не требует ли её ваш аккаунт, и если требует — включает её снова и сообщает вам об этом. Отчёт прилагается к отзыву и уходит, только когда вы сами его отправите."
+            "value": "Когда телеметрия выключена, ничего не отправляется. Но Spora всё равно примерно раз в день уточняет у нас, не требует ли её ваш аккаунт, и если требует — включает её и сообщает вам об этом. Отчёт прилагается к отзыву и уходит, только когда вы сами его отправите."
           }
         },
         "be": {
           "stringUnit": {
             "state": "translated",
-            "value": "Калі тэлеметрыя выключана, нічога не адпраўляецца. Але калі яна хоць раз была ўключана, Spora прыкладна раз на дзень пытаецца ў нас, ці не патрабуе яе ваш акаўнт, і калі патрабуе — уключае яе зноў і паведамляе вам пра гэта. Справаздача дадаецца да водгуку і адпраўляецца, толькі калі вы самі яе адправіце."
+            "value": "Калі тэлеметрыя выключана, нічога не адпраўляецца. Але Spora ўсё роўна прыкладна раз на дзень пытаецца ў нас, ці не патрабуе яе ваш акаўнт, і калі патрабуе — уключае яе і паведамляе вам пра гэта. Справаздача дадаецца да водгуку і адпраўляецца, толькі калі вы самі яе адправіце."
           }
         }
       }
