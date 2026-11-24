@@ -19,6 +19,11 @@ settings:
     # records and the diagnostic log live in its container; see SporaPaths).
     # macOS team-prefixed form: no portal registration needed.
     SPORA_APP_GROUP: $(DEVELOPMENT_TEAM).to.spora.mac
+    # The UniFFI-generated C module (spora_ffiFFI): a modulemap + header here,
+    # the Rust staticlib (linked into SporaKit) provides its symbols. SporaKit's
+    # interface imports it, so every target that imports SporaKit needs it too
+    # (explicit module builds resolve it per target: Xcode 27 fails without).
+    SWIFT_INCLUDE_PATHS: $(SRCROOT)/rust-out/include
 
 targets:
   SporaDesign:
@@ -46,9 +51,6 @@ targets:
         DEFINES_MODULE: "YES"
         GENERATE_INFOPLIST_FILE: "YES"
         SKIP_INSTALL: "NO"
-        # The UniFFI-generated C module (spora_ffiFFI) lives here as a modulemap
-        # + header; the Rust staticlib provides its symbols.
-        SWIFT_INCLUDE_PATHS: $(SRCROOT)/rust-out/include
         LIBRARY_SEARCH_PATHS: $(SRCROOT)/rust-out/lib
         OTHER_LDFLAGS: -lspora_ffi -lresolv
     dependencies:
@@ -65,8 +67,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: to.spora.mac.SporaKitTests
         GENERATE_INFOPLIST_FILE: "YES"
-        # SporaKit's interface imports the UniFFI C module
-        SWIFT_INCLUDE_PATHS: $(SRCROOT)/rust-out/include
     dependencies:
       - target: SporaKit
 
