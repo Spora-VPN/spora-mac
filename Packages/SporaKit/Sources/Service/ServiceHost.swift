@@ -14,7 +14,9 @@ import Foundation
 ///
 /// Only the app runs the service: the tunnel extension writes its records
 /// and log lines into the shared directories (`SporaPaths`), and the app's
-/// service is what bundles and uploads them.
+/// service is what bundles and uploads them. (The direct build's system
+/// extension writes into root's, and the app fetches them from it:
+/// `DiagnosticsHandover`.)
 public final class ServiceHost: @unchecked Sendable {
     public static let shared = ServiceHost()
 

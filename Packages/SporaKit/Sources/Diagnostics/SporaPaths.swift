@@ -5,7 +5,9 @@ import Foundation
 /// The connection records and the diagnostic log are written by two
 /// processes, the app (shares) and the tunnel extension (connections), and
 /// read by the app's service (bug reports, uploads), so they live in the app
-/// group container both belong to (Info.plist `SporaAppGroup`). The service
+/// group container both belong to (Info.plist `SporaAppGroup`). The direct
+/// build's tunnel, a system extension, is root and gets root's container:
+/// the app fetches its files into its own (`DiagnosticsHandover`). The service
 /// state and the connection logs are the app's alone. None of it is backed
 /// up: a restored device token would clone a device, and logs and records
 /// describe the machine they were made on.

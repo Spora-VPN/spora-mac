@@ -30,7 +30,9 @@
 	<string>$(SPORA_APP_GROUP)</string>
 	<key>NetworkExtension</key>
 	<dict>
-		<!-- Must start with an app group the extension's entitlements name. -->
+		<!-- Must start with an app group the extension's entitlements name.
+		     The app also asks the extension for its records and log here
+		     (SporaKit's DiagnosticsHandover builds the same name). -->
 		<key>NEMachServiceName</key>
 		<string>$(SPORA_APP_GROUP).tunnel</string>
 		<key>NEProviderClasses</key>

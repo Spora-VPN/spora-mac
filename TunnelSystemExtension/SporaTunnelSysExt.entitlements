@@ -17,7 +17,8 @@
 	<key>com.apple.security.network.server</key>
 	<true/>
 	<!-- Prefixes NEMachServiceName (Info.plist). The extension runs as root,
-	     so its group container is root's, not the user's. -->
+	     so its group container is root's, not the user's: the app fetches
+	     the records and the log from it over that Mach service. -->
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>$(SPORA_APP_GROUP)</string>

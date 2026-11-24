@@ -19,7 +19,7 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   `telemetry-required`, and real actions: `create-share`, `toggle`, `make-new-link`, `delete`,
   `export-report`, `telemetry?on=`.
 - `xcodebuild … -scheme Spora test` runs `SporaKitTests` (relay-address checks, error mapping,
-  `SPORA_API` parsing, the store migration).
+  `SPORA_API` parsing, the store migration, the diagnostics hand-over).
 - Rust FFI: `../spora/build-ffi-apple.sh` builds the staticlib + Swift bindings into
   `rust-out/` here (gitignored: rebuild it after pulling the core). Rust changes are made in
   `../spora` (its own repo — commit separately).
@@ -96,8 +96,22 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
   container `$(DEVELOPMENT_TEAM).to.spora.macos` (`SPORA_APP_GROUP`; none without a team), because the tunnel
   extension writes them too and the app's service bundles and uploads them; the service state
   (`service/`) and connection logs (`connlog/`) in Application Support/Spora. All excluded from
-  Time Machine. The system-extension packaging (ADR-002) runs as root, so its group container
-  is not the user's: it will need another way to hand records over.
+  Time Machine. The direct build's system extension runs as root, so the group container it
+  writes into is root's, not the user's: the app fetches its records and log into its own.
+- **The hand-over (direct build)**: the system extension serves its `records/` and `diag/` to
+  the app over its Mach service (`NEMachServiceName`, `<app group>.tunnel`): SporaKit's
+  `DiagnosticsHandover`, started in the extension's `main.swift`. Each end takes only the other
+  one, signed by the team that signed itself (a code-signing requirement on the connection, the
+  team read from the process's own signature: an unsigned build hands nothing over). The app
+  (`TunnelDiagnostics.fetch`) copies each file under its own name, by offset and only ever
+  appending, so the core's bug report and uploader read it as if it were written there, a
+  record still open and the running extension's log included. Once a file is finished (a
+  record with its close entry, a log file rotated away, whatever an earlier extension process
+  left) and the app holds all of it, the extension deletes its copy; what is never fetched
+  falls to the core's retention. The app asks at launch, on foreground, after a disconnect and
+  before a bug report: asking starts the extension's process if it is installed, and never
+  installs or activates it. The extension is one per Mac, so whichever user's app asks gets
+  what it has.
 - **Logging: `SporaLog` (d/i/w/e), never `NSLog`/`print`.** Unified log (subsystem
   `to.spora`) plus the core's diagnostic log file. Never log a blob, a token or a URL. The
   core's flow lines (a share's client destinations) reach the unified log only from a debug

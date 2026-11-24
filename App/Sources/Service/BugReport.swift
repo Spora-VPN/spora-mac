@@ -15,8 +15,17 @@ enum BugReport {
     // outbox that sends later), so a report outlives its own send by a day
     private static let maxAge: TimeInterval = 24 * 60 * 60
 
-    /// Write a fresh report and return it, or nil when it could not be made.
-    /// Blocking file work, seconds at worst: call it off the main thread.
+    /// A fresh report, with what the tunnel has recorded up to now (the
+    /// direct build fetches it from the system extension first); nil when it
+    /// could not be made.
+    static func prepare(note: String?) async -> URL? {
+        await TunnelDiagnostics.fetch()
+        return try? await offMain { export(note: note) }
+    }
+
+    /// Write a fresh report from what is in the app's directories and return
+    /// it, or nil when it could not be made. Blocking file work, seconds at
+    /// worst: call it off the main thread.
     static func export(note: String?) -> URL? {
         let dir = SporaPaths.reportsDir
         prune(dir)

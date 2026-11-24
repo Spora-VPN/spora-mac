@@ -24,6 +24,9 @@ struct SporaApp: App {
         // Off the main thread: the device identity, relay access, uploads
         service.start()
         AppDelegate.networkReporter.start()
+        // The direct build: what the tunnel's system extension recorded
+        // while the app was not running
+        Task.detached(priority: .utility) { await TunnelDiagnostics.fetch() }
     }
 
     var body: some Scene {
@@ -35,6 +38,7 @@ struct SporaApp: App {
                 .onOpenURL { handleURL($0) }
                 .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
                     service.onForeground()
+                    Task { await TunnelDiagnostics.fetch() }
                 }
         }
         .windowStyle(.hiddenTitleBar)
@@ -46,7 +50,7 @@ struct SporaApp: App {
                 .environmentObject(model)
                 .environmentObject(controller)
         } label: {
-            MenuBarLabel(state: model.menuBarState)
+            MenuBarItemLabel(state: model.menuBarState, controller: controller)
         }
         .menuBarExtraStyle(.window)
     }
@@ -63,6 +67,22 @@ struct SporaApp: App {
         default:
             break
         }
+    }
+}
+
+/// The menu-bar item's label. It is there for as long as the app runs, while
+/// the window comes and goes, so it is what lends the controller the way to
+/// open the window (`openWindow` exists only in a view).
+struct MenuBarItemLabel: View {
+    let state: MenuBarState
+    let controller: AppController
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        MenuBarLabel(state: state)
+            .onAppear {
+                controller.openMainWindow = { openWindow(id: "main") }
+            }
     }
 }
 

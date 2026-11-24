@@ -246,13 +246,24 @@ final class AppController: ObservableObject {
     /// while it waits, and goes once the request ends either way.
     private func awaitingApproval(_ waiting: Bool) {
         if waiting {
-            NSApp.activate(ignoringOtherApps: true)
-            sheet = .approveExtension
+            showApprovalGuide()
         } else if sheet == .approveExtension {
             sheet = nil
         }
     }
 #endif
+
+    /// Opens the main window. The controller is no view, so one that lives
+    /// as long as the app does (the menu-bar label) lends it its `openWindow`.
+    var openMainWindow: (() -> Void)?
+
+    /// The approval guide, a sheet on the window: a connect from the menu
+    /// bar may find the window closed, so it is opened first.
+    func showApprovalGuide() {
+        NSApp.activate(ignoringOtherApps: true)
+        openMainWindow?()
+        sheet = .approveExtension
+    }
 
     /// The approval guide's OPEN SYSTEM SETTINGS: where macOS lists the
     /// extension (Login Items & Extensions since macOS 15, Privacy &
@@ -287,6 +298,8 @@ final class AppController: ObservableObject {
         case .disconnecting:
             break
         case .disconnected, .invalid:
+            // The run's record is finished: have it where uploads find it
+            TunnelDiagnostics.fetchAfterDisconnect()
             Task { [weak self] in
                 guard let self else { return }
                 let key = await self.tunnel.lastErrorKey()

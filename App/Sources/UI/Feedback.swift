@@ -99,7 +99,7 @@ struct FeedbackSheet: View {
             if let existing {
                 made = existing
             } else {
-                made = try? await offMain { BugReport.export(note: "\(s)\n\n\(m)") }
+                made = await BugReport.prepare(note: "\(s)\n\n\(m)")
             }
             report = made
             preparing = false

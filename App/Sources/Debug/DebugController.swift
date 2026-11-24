@@ -19,6 +19,7 @@ import SporaKit
 ///   spora-debug://make-failed?err=NO_RELAYS   ·   make-new-link?id=   ·   delete[?id=]   ·   toggle[?id=]
 ///   spora-debug://feedback   ·   telemetry-required   ·   export-report   ·   telemetry?on=1|0
 ///   spora-debug://sheet?name=relay-add|relay-edit|relay-remove&index=<i>
+///   spora-debug://sheet?name=approve-extension[&closed=1]  (closed: the window is closed first)
 @MainActor
 enum DebugController {
     static var artifactsDir: URL = {
@@ -90,7 +91,7 @@ enum DebugController {
             if let id = q["id"] ?? model.selectedId { controller.select(id); controller.deleteSelected() }
         case "feedback": controller.openFeedback()
         case "export-report": // the bug report alone, without the share picker
-            Task.detached { _ = BugReport.export(note: "harness") }
+            Task.detached { _ = await BugReport.prepare(note: "harness") }
         case "telemetry": // the real upload switch
             Task { _ = await controller.service.setUploadEnabled(q["on"] == "1") }
         case "telemetry-required": controller.showTelemetryRequired()
@@ -101,7 +102,34 @@ enum DebugController {
             case "relay-edit": controller.sheet = .relayEditor(index: index)
             case "relay-remove": controller.sheet = .removeRelay(index: index)
             case "connect": controller.sheet = .saveConnection(prefillURL: nil)
-            case "approve-extension": controller.sheet = .approveExtension
+            case "approve-extension":
+                if q["closed"] == "1" {
+                    // As a connect from the menu bar finds it: no window
+                    // (this URL opened one, if there was none)
+                    // Not mainWindow(), which settles for any window
+                    let window = {
+                        NSApp.windows.first {
+                            $0.isVisible && $0.styleMask.contains(.titled)
+                                && !String(describing: type(of: $0)).contains("StatusBar")
+                        }
+                    }
+                    // Once this URL is dealt with: the window that takes it
+                    // is brought back if closed here
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        window()?.close()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            let before = window() == nil ? "closed" : "open"
+                            controller.showApprovalGuide()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                SporaLog.d("DebugController", "approval guide: window \(before), then "
+                                    + "\(window() == nil ? "closed" : "open"), "
+                                    + "sheet \(window()?.attachedSheet == nil ? "none" : "up")")
+                            }
+                        }
+                    }
+                } else {
+                    controller.showApprovalGuide()
+                }
             default: controller.sheet = nil
             }
         case "share-starting": if let id = q["id"] { model.shareStarting(id) }
