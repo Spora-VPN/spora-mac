@@ -17,7 +17,7 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   `NO_RELAYS`, …). macOS extras (full list in `DebugController.swift`): `settings?page=`,
   `relays?spora=&own=&tokens=` (in memory), `make-failed?err=`, `sheet?name=`, `feedback`,
   `telemetry-required`, and real actions: `create-share`, `toggle`, `make-new-link`, `delete`,
-  `export-report`, `telemetry?on=`.
+  `export-report`, `telemetry?on=`, `updates?do=check|accept` (the direct build's Sparkle).
 - `xcodebuild … -scheme Spora test` runs `SporaKitTests` (relay-address checks, error mapping,
   `SPORA_API` parsing, the store migration, the diagnostics hand-over).
 - Rust FFI: `../spora/build-ffi-apple.sh` builds the staticlib + Swift bindings into
@@ -52,6 +52,46 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   notarizing need the login keychain: over SSH, run them in the logged-in user's session
   (`sudo launchctl asuser <uid> sudo -u <user> …`). Test with Debug only: a Release build
   talks to production.
+- **Updates (direct build)**: Sparkle 2 (SPM, exact version in `project.yml`), linked into
+  `SporaDirect` only: the App Store forbids self-updaters, and CI fails an App Store build
+  that has it. `Updater` (started at launch) checks daily without asking and asks before
+  it installs (Sparkle's window); Check for Updates… sits in the app menu. Its keys are in
+  `App/SporaDirect-Info.plist`, which is `App/Info.plist` plus Sparkle's keys: change both
+  (CI compares them). The feed is `SPORA_UPDATE_FEED` (`project.yml`): Release
+  `https://spora.to/updates/macos/appcast.xml`; Debug an address that answers nothing, so
+  a debug build never asks production. The feed is to move soon to a domain that survives
+  a block of spora.to, and every shipped build keeps the URL it was built with. Updates
+  carry an EdDSA signature (public half: `SUPublicEDKey`; private half: the build Mac's
+  login keychain, from Sparkle's `generate_keys`), and Sparkle installs nothing that fails
+  it. The "Sign Sparkle's helpers" script phase signs the executables inside
+  Sparkle.framework with the app's identity, the hardened runtime and a timestamp, or
+  notarization refuses them. The app has no app sandbox, so Sparkle's XPC services stay
+  unused.
+- **After an update** the relaunched app replaces the system extension at launch, before
+  it reconciles the tunnel (`TunnelManager.replaceOutdatedExtension`): only when macOS has
+  the extension enabled at another version than the app's copy (`ExtensionVersion`), so
+  never for someone who has not allowed it. A tunnel the old extension runs is stopped and
+  started again on the new one. A newer app dragged into /Applications gets the same.
+- **Releases** (`scripts/release.sh`, on the build Mac, in a git checkout, in the GUI
+  session): refuses a dirty tree and a `../spora` that is dirty or not at
+  `.github/core-ref`. Version: `MARKETING_VERSION` in `project.yml`, bumped by hand in the
+  commit the release tags; build number: `git rev-list --count HEAD` (dev builds use epoch
+  seconds, far above it: a Mac that ran one is never offered a release). It builds the
+  core's release library and a universal Release `SporaDirect` signed as `dev.sh --direct
+  build` signs, notarizes and staples the app, then a DMG (the app beside a link to
+  /Applications), signed, notarized and stapled, signs that for Sparkle, adds its entry to
+  `dist/appcast.xml` (keep the published appcast there), and offers the `v<version>` tag.
+  It publishes nothing: `Spora-<version>.dmg` and `appcast.xml` go side by side to the
+  feed's directory (the appcast names the DMG relative to itself). Ask before publishing.
+- **Testing an update** (Debug builds, the lab Mac): build and notarize version N and N+1;
+  make N+1's DMG (`hdiutil`, `codesign`, `sign_update`) and an appcast item; serve them
+  from the dev machine on the Mac's loopback (`ssh -R`: a LAN address meets macOS's Local
+  Network privacy, error -1009) and point the app there (`defaults write to.spora.macos
+  SUFeedURL …`, which Sparkle reads before the Info.plist; delete it after). Sparkle
+  relaunches the app through LaunchServices, so pin `SPORA_API` there first (`launchctl
+  setenv` in the GUI session; unset it after). Install and run N, connect, then `state
+  updates do=check` and `state updates do=accept` twice (Install Update, Install and
+  Relaunch); `systemextensionsctl list` then shows N+1's extension active.
 - For a share without production, run the core's open `relay` locally and seed it as an own
   relay (`state relays spora=0 own=<host:port>`, then `state create-share`).
 - **Never contact production from development.** Spora's relays are on by default, so the
@@ -146,5 +186,6 @@ relays and the diagnostics; the app wires it up. Android's AGENTS.md ("Relays an
   URLs are bearer credentials.
 - The tunnel provider must stay tiny and sandboxed — one source set, packaged as an appex (Debug
   + App Store) and a system extension (Developer ID); app-side state reconciles from
-  NEVPNStatus + provider messages. Never activate the system extension at launch, only on first
-  connect.
+  NEVPNStatus + provider messages. Never activate the system extension for someone who has not
+  connected: the first activation is on the first connect, and at launch the app only replaces
+  an extension the user already allowed whose version differs from its own (after an update).

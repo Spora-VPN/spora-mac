@@ -4,6 +4,9 @@
 # Xcode / Swift
 build/
 build-direct/
+build-release/
+# scripts/release.sh's output: DMGs and the appcast as last published
+dist/
 DerivedData/
 *.xcuserdatad/
 xcuserdata/

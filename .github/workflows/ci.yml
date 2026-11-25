@@ -78,6 +78,29 @@ jobs:
           xcodebuild -project Spora.xcodeproj -scheme SporaDirect -configuration Release
           -derivedDataPath build-direct CODE_SIGNING_ALLOWED=NO build
 
+      # The App Store forbids self-updaters: Sparkle is the direct build's alone.
+      - name: Sparkle only in the direct build
+        working-directory: spora-mac
+        run: |
+          for app in build/Build/Products/Debug/Spora.app build/Build/Products/Release/Spora.app; do
+            if [ -e "$app/Contents/Frameworks/Sparkle.framework" ] \
+               || otool -L "$app"/Contents/MacOS/* | grep -qi sparkle; then
+              echo "::error::$app has Sparkle"; exit 1
+            fi
+          done
+          test -e build-direct/Build/Products/Release/Spora.app/Contents/Frameworks/Sparkle.framework
+
+      # App/SporaDirect-Info.plist is App/Info.plist plus Sparkle's keys.
+      - name: The direct build's Info.plist follows App/Info.plist
+        working-directory: spora-mac
+        run: |
+          direct="$RUNNER_TEMP/direct.plist"
+          plutil -convert xml1 -o "$direct" App/SporaDirect-Info.plist
+          for key in $(plutil -convert json -o - App/SporaDirect-Info.plist | python3 -c 'import json,sys; print(" ".join(k for k in json.load(sys.stdin) if k.startswith("SU")))'); do
+            plutil -remove "$key" "$direct"
+          done
+          diff <(plutil -convert xml1 -o - App/Info.plist) "$direct"
+
       - name: Test (SporaKitTests)
         working-directory: spora-mac
         run: >

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!-- The direct build's Info.plist: App/Info.plist plus Sparkle's keys. Keep
+     the two in step (CI checks they differ by these keys alone). -->
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>SporaAppGroup</key>
+	<string>$(SPORA_APP_GROUP)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Spora</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSHumanReadableCopyright</key>
+	<string></string>
+	<key>ATSApplicationFontsPath</key>
+	<string>Fonts</string>
+	<!-- Sparkle (the direct build's updates, ADR-002 D4). The appcast:
+	     SPORA_UPDATE_FEED (project.yml; a debug build's answers nothing).
+	     Every update is signed with the EdDSA key whose public half is
+	     below (the private half: the build Mac's login keychain). It checks
+	     daily without asking first, and asks before it installs. -->
+	<key>SUFeedURL</key>
+	<string>$(SPORA_UPDATE_FEED)</string>
+	<key>SUPublicEDKey</key>
+	<string>l1zfaiZaW01QdN6G101buQjD9f42dYUH007YxaZZ1sg=</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUVerifyUpdateBeforeExtraction</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>to.spora.link</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>spora</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>to.spora.debug</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>spora-debug</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

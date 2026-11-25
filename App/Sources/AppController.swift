@@ -95,6 +95,10 @@ final class AppController: ObservableObject {
 #endif
         // Reconcile an already-running tunnel (app relaunched while connected).
         Task { [weak self] in
+#if SPORA_DIRECT
+            // Right after an update: the new extension, then the tunnel
+            await self?.tunnel.replaceOutdatedExtension()
+#endif
             guard let self,
                   let (status, url) = await self.tunnel.syncExisting(),
                   let use = self.model.uses.first(where: { $0.url == url }) else { return }

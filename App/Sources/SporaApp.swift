@@ -43,7 +43,12 @@ struct SporaApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
-        .commands { SporaCommands(controller: controller) }
+        .commands {
+            SporaCommands(controller: controller)
+#if SPORA_DIRECT
+            UpdateCommands()
+#endif
+        }
 
         MenuBarExtra {
             MenuBarPopover()
@@ -120,6 +125,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         SporaDesign.registerFonts()
+#if SPORA_DIRECT
+        _ = Updater.shared // starts the daily update check (ADR-002 D4)
+#endif
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

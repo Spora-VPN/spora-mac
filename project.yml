@@ -8,6 +8,9 @@ options:
 
 settings:
   base:
+    # The version (bumped by hand in the commit a release tags). A release's
+    # build number is the commit count (scripts/release.sh), a dev build's
+    # the time (scripts/dev.sh --direct).
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
@@ -26,6 +29,13 @@ settings:
     # interface imports it, so every target that imports SporaKit needs it too
     # (explicit module builds resolve it per target: Xcode 27 fails without).
     SWIFT_INCLUDE_PATHS: $(SRCROOT)/rust-out/include
+
+packages:
+  # The direct build's updater (ADR-002 D4); the App Store build never links
+  # it. An exact version: the package pins the binary framework's checksum.
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.1
 
 targets:
   SporaDesign:
@@ -97,16 +107,46 @@ targets:
         PRODUCT_NAME: Spora
         ENABLE_HARDENED_RUNTIME: "YES"
         CODE_SIGN_ENTITLEMENTS: App/SporaDirect.entitlements
+        # App/Info.plist plus Sparkle's keys (SUFeedURL, SUPublicEDKey):
+        # keep the two in step.
+        INFOPLIST_FILE: App/SporaDirect-Info.plist
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) SPORA_DIRECT
         # Developer ID builds sign by hand (scripts/dev.sh --direct): the
         # profile's name comes from the environment, never the repo.
         PROVISIONING_PROFILE_SPECIFIER: $(SPORA_PROFILE_APP)
+      configs:
+        # Sparkle's appcast (SUFeedURL). A debug build never asks production:
+        # by default an address that answers nothing, like dev.sh's
+        # SPORA_API; a local test feed is passed at build time
+        # (SPORA_UPDATE_FEED=http://…).
+        Debug:
+          SPORA_UPDATE_FEED: http://127.0.0.1:9/appcast.xml
+        Release:
+          SPORA_UPDATE_FEED: https://spora.to/updates/macos/appcast.xml
     dependencies:
       - target: SporaTunnelSysExt
         embed: true
         copy:
           destination: wrapper
           subpath: Contents/Library/SystemExtensions
+      - package: Sparkle
+    postBuildScripts:
+      # Xcode signs the Sparkle.framework it embeds, but not the executables
+      # inside it, and notarization wants each one signed with the app's
+      # identity, the hardened runtime and a secure timestamp. This runs
+      # before Xcode signs the app, so the app's seal covers the result.
+      # Unsigned builds skip it.
+      - name: Sign Sparkle's helpers
+        basedOnDependencyAnalysis: false
+        script: |
+          [ "$CODE_SIGNING_ALLOWED" = YES ] && [ -n "$EXPANDED_CODE_SIGN_IDENTITY" ] || exit 0
+          fw="$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework"
+          sign() { codesign --force --sign "$EXPANDED_CODE_SIGN_IDENTITY" --options runtime --timestamp "$@"; }
+          for xpc in "$fw"/Versions/B/XPCServices/*.xpc; do
+            sign --preserve-metadata=entitlements "$xpc"
+          done
+          sign "$fw/Versions/B/Autoupdate" "$fw/Versions/B/Updater.app"
+          sign "$fw"
 
   # NetworkExtension packet-tunnel app extension (connect/use side). Stays a thin
   # sandboxed shim (ADR): it locates the utun fd and hands a dup to Rust's
@@ -183,7 +223,7 @@ targetTemplates:
     sources:
       - path: App
         excludes:
-          - "Info.plist"
+          - "*Info.plist"
           - "*.entitlements"
           - "Resources/Fonts"
       # Folder reference so the IBM Plex TTFs land in Resources/Fonts/ (intact

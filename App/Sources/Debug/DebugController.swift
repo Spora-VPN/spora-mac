@@ -20,6 +20,8 @@ import SporaKit
 ///   spora-debug://feedback   ·   telemetry-required   ·   export-report   ·   telemetry?on=1|0
 ///   spora-debug://sheet?name=relay-add|relay-edit|relay-remove&index=<i>
 ///   spora-debug://sheet?name=approve-extension[&closed=1]  (closed: the window is closed first)
+///   spora-debug://updates?do=check|accept  (the direct build: Check for Updates…, then
+///     press the default button of Sparkle's window: Install Update, Install and Relaunch)
 @MainActor
 enum DebugController {
     static var artifactsDir: URL = {
@@ -58,6 +60,14 @@ enum DebugController {
             seed(model, shares: Int(q["shares"] ?? "0") ?? 0, uses: Int(q["uses"] ?? "0") ?? 0)
         case "create-share": controller.beginCreateShare() // exercise the real share() flow
         case "connect-url": if let u = q["url"] { controller.connectToURL(u) } // real tunnel
+        case "updates":
+#if SPORA_DIRECT
+            if q["do"] == "accept" {
+                SporaLog.d("DebugController", "pressed: \(Updater.shared.pressDefaultButton() ?? "nothing")")
+            } else {
+                Updater.shared.checkForUpdates()
+            }
+#endif
         case "icon-preview": iconPreview()
         case "gen-appicon": genAppIcon()
         case "connect-self": // connect to this app's own freshly-created share (loopback)

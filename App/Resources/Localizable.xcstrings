@@ -3842,6 +3842,29 @@
         }
       }
     },
+    "menu_check_updates": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for Updates…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверить обновления…"
+          }
+        },
+        "be": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Праверыць абнаўленні…"
+          }
+        }
+      }
+    },
     "settings_relay_address_placeholder": {
       "extractionState": "manual",
       "localizations": {
