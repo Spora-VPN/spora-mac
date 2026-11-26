@@ -80,9 +80,11 @@ download from spora.to (`.local/docs/adr-002-distribution.md`).
   core's release library and a universal Release `SporaDirect` signed as `dev.sh --direct
   build` signs, notarizes and staples the app, then a DMG (the app beside a link to
   /Applications), signed, notarized and stapled, signs that for Sparkle, adds its entry to
-  `dist/appcast.xml` (keep the published appcast there), and offers the `v<version>` tag.
-  It publishes nothing: `Spora-<version>.dmg` and `appcast.xml` go side by side to the
-  feed's directory (the appcast names the DMG relative to itself). Ask before publishing.
+  `dist/appcast.xml` (keep the published appcast there, or download it from the feed
+  first), and offers the `v<version>` tag. It publishes nothing: publishing is its own step,
+  on spora.to (spora-web's AGENTS.md has how), `Spora-<version>.dmg` first, then
+  `appcast.xml`, which names the DMG relative to itself and is refused while a DMG it names
+  is not there. Ask before publishing.
 - **Testing an update** (Debug builds, the lab Mac): build and notarize version N and N+1;
   make N+1's DMG (`hdiutil`, `codesign`, `sign_update`) and an appcast item; serve them
   from the dev machine on the Mac's loopback (`ssh -R`: a LAN address meets macOS's Local

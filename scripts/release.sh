@@ -27,13 +27,13 @@
 #      signs the DMG, notarizes and staples it too.
 #   5. Signs the DMG for Sparkle (sign_update, the EdDSA key in the login
 #      keychain), writes its appcast entry, and adds it to dist/appcast.xml
-#      (the appcast as last published: keep it, or put the published one
-#      there first).
+#      (the appcast as last published: keep it, or download the published one
+#      from the feed, SPORA_UPDATE_FEED in project.yml, first).
 #   6. On a clean tree, offers an annotated v<version> tag.
 #
-# It publishes nothing. Publishing is its own step: the DMG and appcast.xml go
-# side by side to the feed's directory (SPORA_UPDATE_FEED in project.yml);
-# the appcast names the DMG relative to itself.
+# It publishes nothing. Publishing is its own step, on spora.to (spora-web's
+# AGENTS.md has how): the DMG first, then appcast.xml, which names the DMG
+# relative to itself and is refused while a DMG it names is not there.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -95,7 +95,7 @@ if [ -f "$APPCAST" ]; then
       || die "build $BUILD is not above the appcast's newest ($LATEST): Sparkle would not offer it"
   fi
 else
-  echo "note: no $APPCAST yet: starting a new appcast (put the published one there if there is one)"
+  echo "note: no $APPCAST yet: starting a new appcast (download the published one from the feed first if there is one)"
 fi
 confirm "Build release $VERSION (build $BUILD)?" || { echo "aborted"; exit 1; }
 mkdir -p "$DIST"
@@ -215,5 +215,5 @@ fi
 
 echo
 echo "next: install the DMG on a test Mac (connect, then an update from the previous"
-echo "      release), then publish $DMG_NAME and appcast.xml side by side at"
-echo "      ${FEED%/*}/ (ask first: it reaches every installed copy)."
+echo "      release), then publish on spora.to: $DMG_NAME first, then appcast.xml"
+echo "      (ask first: it reaches every installed copy)."
